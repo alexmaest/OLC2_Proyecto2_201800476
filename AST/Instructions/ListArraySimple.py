@@ -7,29 +7,29 @@ class ListArraySimple(Instruccion):
         self.parameters = parameters
         self.expression = expression
 
-    def executeInstruction(self, enviroment):
+    def compile(self, enviroment):
         if isinstance(self.parameters,ListArraySimple):
             returned = self.createArrays(self,enviroment)
             if returned != None:
-                return Retorno(returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY)
+                return Retorno(TYPE_DECLARATION.VALOR,returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY,None,None,None)
             else: return None
         else:
-            typeVar = self.parameters.executeInstruction(enviroment)
-            exp = self.expression.executeInstruction(enviroment)
+            typeVar = self.parameters.compile(enviroment)
+            exp = self.expression.compile(enviroment)
             if typeVar != None and exp != None:
                 list = [0] * exp.value
-                return Retorno(typeVar.typeVar,list,TYPE_DECLARATION.ARRAY)
+                return Retorno(TYPE_DECLARATION.VALOR,typeVar.typeVar,list,TYPE_DECLARATION.ARRAY,None,None,None)
             else: return None
 
     def createArrays(self,listArray,enviroment):
-        exp = listArray.expression.executeInstruction(enviroment)
+        exp = listArray.expression.compile(enviroment)
         if exp != None:
             if isinstance(listArray.parameters,ListArraySimple):
                 returned = self.createArrays(listArray.parameters,enviroment)
                 list = [returned.value] * exp.value
                 return Retorno(returned.typeVar,list,TYPE_DECLARATION.ARRAY)
             else:
-                typeVar = listArray.parameters.executeInstruction(enviroment)
+                typeVar = listArray.parameters.compile(enviroment)
                 list = [0] * exp.value
                 return Retorno(typeVar.typeVar,list,TYPE_DECLARATION.ARRAY)
         else: return None

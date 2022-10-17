@@ -2,7 +2,6 @@ from AST.Abstracts.Instruccion import Instruccion
 from AST.Abstracts.Retorno import Retorno, TYPE_DECLARATION
 from AST.Expressions.Arithmetic import TYPE_OPERATION
 from AST.Instructions.AssignmentAccessArray import AssignmentAccessArray
-from AST.Symbol.Symbol import Symbol
 from AST.Error.Error import Error
 from AST.Error.ErrorList import listError
 
@@ -26,20 +25,20 @@ class Assignment(Instruccion):
                         if exp.typeVar == None and exp.typeSingle == TYPE_DECLARATION.VECTOR:
                             if singleId.typeSingle == TYPE_DECLARATION.VECTOR:
                                 enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                return self.createAssignation(enviroment, exp, exist)
                             else: 
                                 listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
                         else:
                             if singleId.typeSingle == exp.typeSingle:
+
                                 if singleId.typeVar == exp.typeVar:
-                                    enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                    return self.createAssignation(enviroment, exp, exist)
+                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
+                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 elif singleId.typeVar == TYPE_DECLARATION.INTEGER and exp.typeVar == TYPE_DECLARATION.USIZE:
-                                    enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                    return self.createAssignation(enviroment, exp, exist)
+                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
+                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 elif singleId.typeVar == TYPE_DECLARATION.USIZE and exp.typeVar == TYPE_DECLARATION.INTEGER:
-                                    enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                    return self.createAssignation(enviroment, exp, exist)
+                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
+                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 else: 
                                     listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a una variable tipo "+str(singleId.typeVar),"Local",self.row,self.column,"SEMANTICO"))
                             else: 
@@ -81,12 +80,22 @@ class Assignment(Instruccion):
                 listError.append(Error("Error: La variable aún no ha sido declarada","Local",self.row,self.column,"SEMANTICO"))
 
     def createAssignation(self, enviroment, exp, exist):
-        temporal = enviroment.generator.obtenerTemporal()
-        CODE = '/* ASIGNACION */\n'
-        CODE += f'  {exp.code}\n'
-        CODE += f'  {temporal} = {exist.relativePosition};\n'
-        CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
-        return CODE
+        if exist.isReference:
+            temporal = enviroment.generator.generateTemporal()
+            temporal2 = enviroment.generator.generateTemporal()
+            CODE = '/* ASIGNACION CON REFERENCIA */\n'
+            CODE += f'{exp.code}'
+            CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+            CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
+            CODE += f'  Stack[(int) {temporal2}] = {exp.temporal};\n'
+            return CODE
+        else:
+            temporal = enviroment.generator.generateTemporal()
+            CODE = '/* ASIGNACION */\n'
+            CODE += f'{exp.code}'
+            CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+            CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
+            return CODE
 
     def foundAttribute(self, variable, list, number):
         if list[number].id in variable.value:

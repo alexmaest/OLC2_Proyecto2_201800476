@@ -19,39 +19,34 @@ class Logic():
     def compile(self, enviroment):
         leftValue = self.lExp.compile(enviroment)
         rightValue = self.rExp.compile(enviroment)
-        CODE = ''
-        CODE += leftValue.code
-        CODE += rightValue.code
-        trueLabel = enviroment.generator.obtenerEtiqueta()
-        falseLabel = enviroment.generator.obtenerEtiqueta()
+        
         if leftValue != None and rightValue != None:
+            CODE = ''
             if self.type == TYPE_LOGICAL.AND:
                 result = leftValue.value and rightValue.value
-                CODE += f'if ({leftValue.temporal} && {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += leftValue.code
+                CODE += f'{leftValue.trueLabel}:\n'
+                CODE += rightValue.code
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
+                value.trueLabel = rightValue.trueLabel
+                value.falseLabel = f'{leftValue.falseLabel}:\n{rightValue.falseLabel}'
                 return value
             elif self.type == TYPE_LOGICAL.OR:
                 result = leftValue.value or rightValue.value
-                CODE += f'if ({leftValue.temporal} || {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += leftValue.code
+                CODE += f'{leftValue.falseLabel}:\n'
+                CODE += rightValue.code
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
+                value.trueLabel = f'{leftValue.trueLabel}:\n{rightValue.trueLabel}'
+                value.falseLabel = rightValue.falseLabel
                 return value
             elif self.type == TYPE_LOGICAL.NOT:
                 result = not(leftValue.value)
-                CODE += f'if ({leftValue.temporal}) goto {trueLabel};\n'
-                CODE += f'goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
-                value.trueLabel = falseLabel
-                value.falseLabel = trueLabel
+                CODE += leftValue.code
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
+                value.trueLabel = leftValue.falseLabel
+                value.falseLabel = leftValue.trueLabel
                 return value
-            else:
-                listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
-                return None
         else:
             listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
             return None

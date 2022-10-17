@@ -7,5 +7,5 @@ class ParamReference():
         self.id = id
         self.reference = reference
     
-    def executeInstruction(self, enviroment):
-        return self.id.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        return self.id.compile(enviroment)

@@ -1,52 +1,37 @@
 class Generator():
     def __init__(self):
-        self.generator = ""
-        self.code = ""
-        self.externCode = ""
-        self.temporal = 0
-        self.label = 0
+        self.generator = ''
+        self.code = ''
+        self.temporalCount = 0
+        self.labelCount = 0
 
-    def obtenerTemporal(self):
-        temp = "T"+self.temporal.__str__()
-        self.temporal += 1
-        return temp
+    def generateTemporal(self):
+        singleTemp = 'T' + str(self.temporalCount)
+        self.temporalCount += 1
+        return singleTemp
 
-    def obtenerEtiqueta(self):
-        et = "L"+self.label.__str__()
-        self.label += 1
-        return et
+    def generateLabel(self):
+        singleLabel = 'L' + str(self.labelCount)
+        self.labelCount += 1
+        return singleLabel
 
-    def agregarFuncion(self,code):
-        self.externCode += code
+    def addFunction(self,code):
+        self.code += code
 
-    def generarEncabezado(self):
-        encabezado = """ 
-#include <stdio.h>
-float Stack[10000];
-float Heap[10000];
-int SP = 0;
-int HP = 0;\n"""
-        if self.temporal > 0:
-            encabezado += "float "
-        for i in range(0, self.temporal):
+    def generateHeader(self):
+        header = '#include <stdio.h>\n'
+        header += 'float Stack[10000];\n'
+        header += 'float Heap[10000];\n'
+        header += 'int SP = 0;\n'
+        header += 'int HP = 0;\n'
+        if self.temporalCount > 0:
+            header += 'float '
+        for i in range(0, self.temporalCount):
             if i % 15 == 0 and i > 0:
-                encabezado += "\n"
-            encabezado += f"T{i}"
-            if i < self.temporal - 1:
-                encabezado += ","
-        if self.temporal > 0:
-            encabezado += "; \n\n"
-        return encabezado
-
-    def agregarInstruccion(self,code):
-        #print(code)
-        self.code += code + '\n'
-
-    def generarMain(self):
-        code = self.generarEncabezado()
-        code += "int main(){ \n" \
-                  f"{self.code} \n" \
-                  f"return 0;" \
-                  "\n}\n"
-        code += self.externCode
-        return code
+                header += '\n'
+            header += f'T{i}'
+            if i < self.temporalCount - 1:
+                header += ','
+        if self.temporalCount > 0:
+            header += ';\n\n'
+        return header

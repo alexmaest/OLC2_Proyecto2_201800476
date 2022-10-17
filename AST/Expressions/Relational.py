@@ -26,13 +26,13 @@ class Relational():
             CODE = ''
             CODE += leftValue.code
             CODE += rightValue.code
-            trueLabel = enviroment.generator.obtenerEtiqueta()
-            falseLabel = enviroment.generator.obtenerEtiqueta()
+            trueLabel = enviroment.generator.generateLabel()
+            falseLabel = enviroment.generator.generateLabel()
             if self.type == TYPE_RELATIONAL.IGUALI:
                 result = leftValue.value == rightValue.value
                 CODE += f'  if ({leftValue.temporal} == {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value
@@ -40,7 +40,7 @@ class Relational():
                 result = leftValue.value != rightValue.value
                 CODE += f'  if ({leftValue.temporal} != {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value
@@ -48,7 +48,7 @@ class Relational():
                 result = leftValue.value > rightValue.value
                 CODE += f'  if ({leftValue.temporal} > {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value
@@ -56,7 +56,7 @@ class Relational():
                 result = leftValue.value < rightValue.value
                 CODE += f'  if ({leftValue.temporal} < {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value
@@ -64,7 +64,7 @@ class Relational():
                 result = leftValue.value >= rightValue.value
                 CODE += f'  if ({leftValue.temporal} >= {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value
@@ -72,7 +72,7 @@ class Relational():
                 result = leftValue.value <= rightValue.value
                 CODE += f'  if ({leftValue.temporal} <= {rightValue.temporal}) goto {trueLabel};\n'
                 CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.BOOLEAN, result, TYPE_DECLARATION.SIMPLE,"",CODE,"")
+                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
                 value.trueLabel = trueLabel
                 value.falseLabel = falseLabel
                 return value

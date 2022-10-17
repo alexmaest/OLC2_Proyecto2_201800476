@@ -13,16 +13,20 @@ class AssignmentAccessArray(Instruccion):
         self.row = row
         self.column = column
     
-    def executeInstruction(self, enviroment):
-        access = self.accessArray.executeInstruction(enviroment)
-        exp = self.expression.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        access = self.accessArray.compile(enviroment)
+        exp = self.expression.compile(enviroment)
         if access != None and exp != None:
             exist = enviroment.getVariable(self.accessArray.id.id)
             if exist != None:
                 if self.attributes == None:
                     if self.isDeclaration or exist.mutable:
                         if self.compareTypes(access,exp,enviroment):
-                            access.value = exp.value
+                            CODE = '/* ASIGNACION POR ACCESO */\n'
+                            CODE += access.code
+                            CODE += exp.code
+                            CODE += f'{access.label} = {exp.temporal}\n'
+                            return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,CODE,None)
                         else:
                             #Ya se dijeron los errores así que no se hace nada
                             pass

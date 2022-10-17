@@ -9,11 +9,17 @@ class Return(Instruccion):
         self.row = row
         self.column = column
     
-    def executeInstruction(self, enviroment):
+    def compile(self, enviroment):
         if self.exp != None:
-            returned = self.exp.executeInstruction(enviroment)
+            returned = self.exp.compile(enviroment)
             if returned != None:
-                return Retorno(returned.typeVar,returned.value,returned.typeSingle)
+                temporal = enviroment.generator.generateTemporal()
+                CODE = '/* RETURN */\n'
+                CODE += returned.code
+                CODE += f'  {temporal} = SP + 0;\n'
+                CODE += f'  Stack[(int){temporal}] = {returned.temporal};\n'
+                CODE += f'  goto ReturnLabel;\n'
+                return Retorno(TYPE_DECLARATION.VALOR,returned.typeVar,returned.value,returned.typeSingle,None,CODE,temporal)
             else:
                 listError.append(Error("Error: El return no es valido","Local",self.row,self.column,"SEMANTICO"))
                 return None

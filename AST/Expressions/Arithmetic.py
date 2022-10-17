@@ -115,14 +115,14 @@ class Arithmetic():
 
     def operateSum(self, enviroment, typeResult):
         CODE = ''
-        temporal = enviroment.generator.obtenerTemporal()
+        temporal = enviroment.generator.generateTemporal()
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
         if typeResult == TYPE_DECLARATION.INTEGER or typeResult == TYPE_DECLARATION.USIZE or typeResult == TYPE_DECLARATION.FLOAT:
             CODE += lReturn.code + '\n'
             CODE += rReturn.code + '\n'
             CODE += f'{temporal} = {lReturn.temporal} + {rReturn.temporal};\n'
-            return Retorno(typeResult,lReturn.value + rReturn.value,TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,lReturn.value + rReturn.value,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
         else:
             CODE += lReturn.code + '\n'
             CODE += rReturn.code + '\n'
@@ -131,43 +131,43 @@ class Arithmetic():
             CODE += Literal(rReturn,2).compile(enviroment)
             CODE += f'Heap[HP] = 0;\n'
             CODE += f'HP = HP + 1;\n'
-            return Retorno(typeResult,str(lReturn.value) + str(rReturn.value),TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,str(lReturn.value) + str(rReturn.value),TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
 
     def operateSub(self, enviroment, typeResult, singleReturn):
         CODE = ''
         if singleReturn != None:
-            temporal = enviroment.generator.obtenerTemporal()
-            temporal2 = enviroment.generator.obtenerTemporal()
+            temporal = enviroment.generator.generateTemporal()
+            temporal2 = enviroment.generator.generateTemporal()
             lReturn = self.lExp.compile(enviroment)
             rReturn = self.rExp.compile(enviroment)
             CODE += singleReturn.code + '\n'
             CODE += f'{temporal} = -1;\n'
             CODE += f'{temporal2} = {singleReturn.temporal} * {temporal};\n'
-            return Retorno(typeResult, singleReturn.value * -1, TYPE_DECLARATION.SIMPLE,"",CODE,temporal2)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,singleReturn.value * -1, TYPE_DECLARATION.SIMPLE,None,CODE,temporal2)
         else:
-            temporal = enviroment.generator.obtenerTemporal()
+            temporal = enviroment.generator.generateTemporal()
             lReturn = self.lExp.compile(enviroment)
             rReturn = self.rExp.compile(enviroment)
             CODE += lReturn.code + '\n'
             CODE += rReturn.code + '\n'
             CODE += f'{temporal} = {lReturn.temporal} - {rReturn.temporal};\n'
-            return Retorno(typeResult, lReturn.value - rReturn.value,TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,lReturn.value - rReturn.value,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
 
     def operateMul(self, enviroment, typeResult):
         CODE = ''
-        temporal = enviroment.generator.obtenerTemporal()
+        temporal = enviroment.generator.generateTemporal()
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
         CODE += lReturn.code + '\n'
         CODE += rReturn.code + '\n'
         CODE += f'{temporal} = {lReturn.temporal} * {rReturn.temporal};\n'
-        return Retorno(typeResult, lReturn.value * rReturn.value,TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+        return Retorno(TYPE_DECLARATION.VALOR,typeResult, lReturn.value * rReturn.value,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
 
     def operateDiv(self, enviroment, typeResult):
         CODE = '/* VALIDACION DE DIVISION ENTRE 0 */\n'
-        temporal = enviroment.generator.obtenerTemporal()
-        trueLabel = enviroment.generator.obtenerEtiqueta()
-        falseLabel = enviroment.generator.obtenerEtiqueta()
+        temporal = enviroment.generator.generateTemporal()
+        trueLabel = enviroment.generator.generateLabel()
+        falseLabel = enviroment.generator.generateLabel()
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
         if typeResult == TYPE_DECLARATION.INTEGER or TYPE_DECLARATION.USIZE:
@@ -180,7 +180,7 @@ class Arithmetic():
             if rReturn.value == 0:
                 listError.append(Error("Error: No se puede dividir entre cero","Local",self.row,self.column,"SEMANTICO"))
                 return None
-            return Retorno(typeResult, int(lReturn.value / rReturn.value),TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,int(lReturn.value / rReturn.value),TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
         else:
             CODE += lReturn.code + '\n'
             CODE += rReturn.code + '\n'
@@ -191,14 +191,14 @@ class Arithmetic():
             if rReturn.value == 0.0:
                 listError.append(Error("Error: No se puede dividir entre cero","Local",self.row,self.column,"SEMANTICO"))
                 return None
-            return Retorno(typeResult, float(lReturn.value / rReturn.value),TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+            return Retorno(TYPE_DECLARATION.VALOR,typeResult,float(lReturn.value / rReturn.value),TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
 
     def operateMod(self, enviroment, typeResult):
         CODE = ''
-        temporal = enviroment.generator.obtenerTemporal()
+        temporal = enviroment.generator.generateTemporal()
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
         CODE += lReturn.code + '\n'
         CODE += rReturn.code + '\n'
         CODE += f'{temporal} = {lReturn.temporal} % {rReturn.temporal};\n'
-        return Retorno(typeResult, lReturn.value % rReturn.value,TYPE_DECLARATION.SIMPLE,"",CODE,temporal)
+        return Retorno(TYPE_DECLARATION.VALOR,typeResult,lReturn.value % rReturn.value,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)

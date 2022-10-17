@@ -1,4 +1,3 @@
-from AST.Symbol.Generator import Generator
 from abc import ABC, abstractmethod
 
 class Instruccion(ABC):

@@ -5,5 +5,5 @@ class AttAssign():
     def __init__(self, id):
         self.id = id
     
-    def executeInstruction(self, enviroment):
-        return self.id.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        return self.id.compile(enviroment)

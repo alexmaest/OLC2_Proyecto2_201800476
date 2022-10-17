@@ -15,16 +15,18 @@ class If(Instruccion):
         condition = self.condition.compile(enviroment)
         if condition != None:
             if condition.typeVar == TYPE_DECLARATION.BOOLEAN:
-                exitLabel = enviroment.generator.obtenerEtiqueta()
-                CODE = "/* INSTRUCCION IF */\n"
+                exitLabel = enviroment.generator.generateLabel()
+                returned = self.statement.compile(enviroment)
+                CODE = "/* IF */\n"
                 CODE += condition.code
                 CODE += f'{condition.trueLabel}: \n'
-                CODE += self.statement.compile(enviroment)
+                CODE += returned.code
                 CODE += f'  goto {exitLabel};\n'
                 CODE += f'{condition.falseLabel}: \n'
                 if self.other != None:
-                    CODE += self.other.compile(enviroment)
+                    returned2 = self.other.compile(enviroment)
+                    CODE += returned2.code
                 CODE += f'{exitLabel}:\n'
-                return CODE
+                return Retorno(returned.typeIns,returned.typeVar,returned.value,returned.typeSingle,None,CODE,None)
             else:
                 listError.append(Error("Error: La condición no es un booleano","Local",self.row,self.column,"SEMANTICO"))

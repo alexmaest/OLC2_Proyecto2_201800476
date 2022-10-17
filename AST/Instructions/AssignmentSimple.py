@@ -17,23 +17,23 @@ class AssignmentSimple(Instruccion):
                 content.append(self.mutable)
                 content.append(self.id)
                 content.append(self.reference)
-                return Retorno(typeVar.typeVar,content,TYPE_DECLARATION.VECTOR,"","","")
+                return Retorno(TYPE_DECLARATION.INSTRUCCION,typeVar.typeVar,content,TYPE_DECLARATION.VECTOR,None,None,None)
             elif typeVar.typeSingle == TYPE_DECLARATION.ARRAY:
                 content = []
                 content.append(self.mutable)
                 content.append(self.id)
                 content.append(typeVar.value)
                 content.append(self.reference)
-                return Retorno(typeVar.typeVar,content,TYPE_DECLARATION.ARRAY,"","","")
+                return Retorno(TYPE_DECLARATION.INSTRUCCION,typeVar.typeVar,content,TYPE_DECLARATION.ARRAY,None,None,None)
             if typeVar.typeSingle == TYPE_DECLARATION.STRUCT:
                 content = []
                 content.append(self.mutable)
                 content.append(self.id)
                 content.append(self.reference)
-                return Retorno(typeVar.typeVar,content,TYPE_DECLARATION.STRUCT,"","","")
+                return Retorno(TYPE_DECLARATION.INSTRUCCION,typeVar.typeVar,content,TYPE_DECLARATION.STRUCT,None,None,None)
             else:
                 content = []
                 content.append(self.mutable)
                 content.append(self.id)
                 content.append(self.reference)
-                return Retorno(typeVar.typeVar,content,TYPE_DECLARATION.SIMPLE,"","","")
+                return Retorno(TYPE_DECLARATION.INSTRUCCION,typeVar.typeVar,content,TYPE_DECLARATION.SIMPLE,None,None,None)

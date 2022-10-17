@@ -25,7 +25,6 @@ class AttAccess():
         else: 
             exist = self.expList[0].compile(enviroment)
         if exist != None:
-            singleId = None
             if isinstance(self.expList[0].id.id,AccessArray):
                 singleId = exist
             else:

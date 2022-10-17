@@ -1,13 +1,15 @@
 from AST.Abstracts.Expression import Expression
 from AST.Abstracts.Retorno import Retorno, TYPE_DECLARATION
-from AST.Expressions.Literal import Literal
 
 class Handler():
-    def __init__(self, typeVar, value, typeSingle):
+    def __init__(self, typeIns, typeVar, value, typeSingle, label, code, temporal):
+        self.typeIns = typeIns
         self.typeVar = typeVar
         self.value = value
         self.typeSingle = typeSingle
+        self.label = label
+        self.code = code
+        self.temporal = temporal
 
     def compile(self,enviroment):
-        singleValue = Literal(self.typeVar,self.value)
-        return singleValue.compile(enviroment)
+        return Retorno(self.typeIns,self.typeVar,self.value,self.typeSingle,self.label,self.code,self.temporal)

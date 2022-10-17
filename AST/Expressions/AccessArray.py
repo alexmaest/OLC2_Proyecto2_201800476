@@ -11,22 +11,24 @@ class AccessArray():
         self.column = column
         self.dimensions = 0
 
-    def executeInstruction(self,enviroment):
-        singleId = self.id.executeInstruction(enviroment)
+    def compile(self,enviroment):
+        singleId = self.id.compile(enviroment)
         if singleId != None:
-            if singleId.typeSingle == TYPE_DECLARATION.ARRAY:
-                self.countDimensions(singleId.value)
-                if self.dimensions >= len(self.listAccess):
-                    return self.returnValue(singleId.value,self.listAccess,0,enviroment)
+            if singleId.typeSingle == TYPE_DECLARATION.ARRAY or singleId.typeSingle == TYPE_DECLARATION.VECTOR:
+                label = enviroment.generator.generateLabel()
+                temporal = enviroment.generator.generateTemporal()
+                temporal2 = enviroment.generator.generateTemporal()
+                CODE = '/* ACCESO A ARRAY */\n'
+                CODE += f'{temporal} = SP + {singleId.relativePosition};\n'
+                CODE += f'{temporal2} = Stack[(int) {temporal}];\n'
+                if len(singleId.value) >= len(self.listAccess):
+                    returned = self.returnValue(singleId,self.compileValues(enviroment),temporal2,enviroment)
+                    CODE += returned.code
+                    CODE = CODE.replace('ArrayLabel',label)
+                    CODE += f'{label}:\n'
+                    return Retorno(TYPE_DECLARATION.VALOR,returned.typeVar,None,TYPE_DECLARATION.SIMPLE,returned.label,CODE,returned.temporal)
                 else:
                     listError.append(Error("Error: La lista no posee esa cantidad de dimensiones","Local",self.row,self.column,"SEMANTICO"))
-                    return None
-            elif singleId.typeSingle == TYPE_DECLARATION.VECTOR:
-                self.countDimensions(singleId.value[1])
-                if self.dimensions >= len(self.listAccess):
-                    return self.returnValue(singleId.value[1],self.listAccess,0,enviroment)
-                else:
-                    listError.append(Error("Error: El vector no posee esa cantidad de dimensiones","Local",self.row,self.column,"SEMANTICO"))
                     return None
             else:
                 listError.append(Error("Error: La variable no es una lista","Local",self.row,self.column,"SEMANTICO"))
@@ -34,25 +36,25 @@ class AccessArray():
         else:
             return None
 
-    def returnValue(self, value, position, number, enviroment):
-        returned = position[number].executeInstruction(enviroment)
-        if returned.typeVar == TYPE_DECLARATION.INTEGER or returned.typeVar == TYPE_DECLARATION.USIZE:
-            for j in range(len(value)):
-                if (returned.value + 1) <= len(value):
-                    if returned.value == j:
-                        if len(position) > (number+1):
-                            if value[j].typeSingle == TYPE_DECLARATION.VECTOR:
-                                return self.returnValue(value[j].value[1],position,number+1,enviroment)
-                            else:
-                                return self.returnValue(value[j].value,position,number+1,enviroment)
-                        else:
-                            return value[j]
-                else:
-                    listError.append(Error("Error: El indice excede el tamaño del arreglo","Local",self.row,self.column,"SEMANTICO"))
-                    return None
+    def returnValue(self, exp, expList, temporal, enviroment):
+        obtained = expList.pop(0)
+        temporal1 = enviroment.generator.generateTemporal()
+        temporal2 = enviroment.generator.generateTemporal()
+        temporal3 = enviroment.generator.generateTemporal()
+        temporal4 = enviroment.generator.generateTemporal()
+        CODE = '/* ACCEDIENDO A POSICION */\n'
+        CODE += f'{temporal1} = Heap[(int) {temporal}]; /* TAMAÑO DE ARRAY */\n'
+        CODE += f' if ({obtained.temporal} > {temporal1}) goto ArrayLabel;\n'
+        CODE += f'{temporal2} = {temporal} + 1;\n'
+        CODE += f'{temporal3} = {temporal2} + {obtained.temporal};\n'
+        CODE += f'{temporal4} = Heap[(int) {temporal3}];\n'
+        if(len(expList)> 0):
+            result = self.returnValue(expList,temporal4,enviroment)
+            CODE += result.code
+            return Retorno(TYPE_DECLARATION.VALOR,exp.typeVar,None,TYPE_DECLARATION.SIMPLE,result.label,CODE,result.temporal)
         else:
-            listError.append(Error("Error: El indice para acceder no es tipo entero o usize","Local",self.row,self.column,"SEMANTICO"))
-            return None
+            return Retorno(TYPE_DECLARATION.VALOR,exp.typeVar,None,TYPE_DECLARATION.SIMPLE,'Heap[(int) {temporal3}]',CODE,temporal4)
+
         '''
         position = [0]
         value = [1]
@@ -60,15 +62,16 @@ class AccessArray():
         position = [1,2,0]
         value = [[[1,2],[3,4],[5,6]],[[7,8],[9,10],[11,12]]]
         '''
+
     def getId(self):
         return self.id
 
-    def countDimensions(self,value):
-        self.dimensions += 1
-        if isinstance(value,list):
-            if value[0].typeSingle == TYPE_DECLARATION.VECTOR:
-                if isinstance(value[0].value[1],list):
-                    self.countDimensions(value[0].value[1])
-            else:
-                if isinstance(value[0].value,list):
-                    self.countDimensions(value[0].value)
+    def compileValues(self, enviroment):
+        values = []
+        for exp in self.listAccess:
+            single = exp.compile(enviroment)
+            values.append(single)
+            if single.typeVar != TYPE_DECLARATION.INTEGER and single.typeVar != TYPE_DECLARATION.USIZE:
+                return []
+            else: pass
+        return values

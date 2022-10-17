@@ -1,5 +1,5 @@
-from AST.Symbol.Generator import Generator
 from abc import ABC, abstractmethod
+from AST.Abstracts.Retorno import Retorno
 
 class Expression(ABC):
 
