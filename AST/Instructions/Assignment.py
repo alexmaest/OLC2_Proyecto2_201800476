@@ -32,13 +32,13 @@ class Assignment(Instruccion):
 
                                 if singleId.typeVar == exp.typeVar:
                                         enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 elif singleId.typeVar == TYPE_DECLARATION.INTEGER and exp.typeVar == TYPE_DECLARATION.USIZE:
                                         enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 elif singleId.typeVar == TYPE_DECLARATION.USIZE and exp.typeVar == TYPE_DECLARATION.INTEGER:
                                         enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
                                 else: 
                                     listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a una variable tipo "+str(singleId.typeVar),"Local",self.row,self.column,"SEMANTICO"))
                             else: 

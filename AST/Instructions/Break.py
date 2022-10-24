@@ -16,14 +16,14 @@ class Break(Instruccion):
                 temporal = enviroment.generator.generateTemporal()
                 CODE = '/* BREAK */\n'
                 CODE += returned.code
-                CODE += f'  {temporal} = SP + 0;\n'
+                CODE += f'  {temporal} = SP;\n'
                 CODE += f'  Stack[(int){temporal}] = {returned.temporal};\n'
                 CODE += f'  goto BreakLabel;\n'
-                return Retorno(TYPE_DECLARATION.VALOR,returned.typeVar,returned.value,returned.typeSingle,None,CODE,temporal)
+                return Retorno(TYPE_DECLARATION.BREAK,returned.typeVar,returned.typeSingle,None,CODE,temporal)
             else:
                 listError.append(Error("Error: El break no es valido","Local",self.row,self.column,"SEMANTICO"))
                 return None
         else:
             CODE = '/* BREAK */\n'
             CODE += f'  goto BreakLabel;\n'
-            return Retorno(TYPE_DECLARATION.VALOR,None,None,None,None,CODE,None)
+            return Retorno(TYPE_DECLARATION.BREAK,None,None,None,CODE,None)

@@ -27,37 +27,37 @@ class DeclarationSingle(Instruccion):
         if content != None and exp != None:
             if content.typeSingle == TYPE_DECLARATION.SIMPLE or content.typeSingle == TYPE_DECLARATION.VECTOR:
                 if exp.typeVar == None and exp.typeSingle == TYPE_DECLARATION.VECTOR:
-                    enviroment.saveVariable(Symbol(content.typeVar,content.value[1],exp.value,content.typeSingle,content.value[0],self.row,self.column))
+                    enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],exp.att,self.row,self.column))
                 elif content.typeSingle == exp.typeSingle:
-                    if exp.typeVar == content.typeVar:
+                    if exp.typeVar == content.typeVar[3]:
                         size = enviroment.size
-                        if enviroment.saveVariable(Symbol(content.typeVar,content.value[1],exp.value,content.typeSingle,content.value[0],enviroment.size,self.isReference,self.row,self.column)):
-                            return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None)
+                        if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,self.isReference,exp.att,self.row,self.column)):
+                            return Retorno(None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None,None)
                         else:pass
-                    elif self.uSizeValidation(exp.typeVar,content.typeVar):
-                        enviroment.saveVariable(Symbol(TYPE_DECLARATION.USIZE,content.value[1],exp.value,content.typeSingle,content.value[0],self.row,self.column))
-                    else: listError.append(Error("Error: No se puede asignar un valor"+str(exp.typeVar)+"a una variable tipo"+str(content.typeVar),"Local",self.row,self.column,"SEMANTICO"))
+                    elif self.uSizeValidation(exp.typeVar,content.typeVar[3]):
+                        enviroment.saveVariable(Symbol(TYPE_DECLARATION.USIZE,content.typeVar[1],content.typeSingle,content.typeVar[0],exp.att,self.row,self.column))
+                    else: listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a una variable tipo"+str(content.typeVar[3]),"Local",self.row,self.column,"SEMANTICO"))
                 else: listError.append(Error("Error: Está tratando de asignar un valor de diferentes dimensiones a las que intenta declarar","Local",self.row,self.column,"SEMANTICO"))
             else:
                 #Comparar si las dimensiones a asignar son las mismas
-                if exp.typeVar == content.typeVar:
+                if exp.typeVar == content.typeVar[3]:
                     if exp.typeSingle == TYPE_DECLARATION.ARRAY:
                         if isinstance(self.asignation.type, ListArraySimple):
-                            if self.dimensionalCompare(exp.value, content.value[2]):
+                            if self.dimensionalCompare(exp.value, content.typeVar[2]):
                                 size = enviroment.size
-                                if enviroment.saveVariable(Symbol(content.typeVar,content.value[1],exp.value,content.typeSingle,content.value[0],enviroment.size,True,self.row,self.column)):
-                                    return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None)
+                                if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,True,exp.att,self.row,self.column)):
+                                    return Retorno(None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None,None)
                                 else:pass
                             else: listError.append(Error("Error: Está tratando de asignar una lista de diferentes dimensiones a las que intenta declarar","Local",self.row,self.column,"SEMANTICO"))
                         else:
                             size = enviroment.size
-                            if enviroment.saveVariable(Symbol(content.typeVar,content.value[1],exp.value,content.typeSingle,content.value[0],enviroment.size,True,self.row,self.column)):
-                                return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None)
+                            if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,True,exp.att,self.row,self.column)):
+                                return Retorno(None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None,None)
                             else:pass
                     elif exp.typeSingle == content.typeSingle:
-                        enviroment.saveVariable(Symbol(content.typeVar,content.value[1],exp.value,content.typeSingle,content.value[0],self.row,self.column))
+                        enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],exp.att,self.row,self.column))
                     else: listError.append(Error("Error: No se puede asignar un valor simple a una variable de varias dimensiones","Local",self.row,self.column,"SEMANTICO"))
-                else: listError.append(Error("Error: No se puede asignar un valor"+str(exp.typeVar)+"a una variable tipo"+str(content.typeVar),"Local",self.row,self.column,"SEMANTICO"))
+                else: listError.append(Error("Error: No se puede asignar un valor"+str(exp.typeVar)+"a una variable tipo"+str(content.typeVar[3]),"Local",self.row,self.column,"SEMANTICO"))
         else: listError.append(Error("Error: No se pudo asignar la variable porque su valor es nulo","Local",self.row,self.column,"SEMANTICO"))
 
     def createDeclaration(self, enviroment, exp, size, param, newSize):

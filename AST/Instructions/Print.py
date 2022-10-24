@@ -20,10 +20,10 @@ class Print(Instruccion):
             if returned != None:
                 if returned.typeSingle == TYPE_DECLARATION.SIMPLE:
                     if returned.typeVar == TYPE_DECLARATION.aSTRING or returned.typeVar == TYPE_DECLARATION.aSTRING:
-                        result = re.findall('\{\}|\{\:\?\}',returned.value)
+                        result = re.findall('\{\}|\{\:\?\}',self.expList[0].value)
                         if len(self.expList) - 1 == len(result):
                             temporal = enviroment.generator.generateTemporal()
-                            complete = returned.value
+                            complete = self.expList[0].value
                             #Generando texto de la instrucción
                             CODE = "/* PRINT */\n"
                             CODE += f'  {temporal} = HP;\n'
@@ -58,15 +58,11 @@ class Print(Instruccion):
                                     listError.append(Error("Error: Una de las expresiones que ha ingresado en println es nula","Local",self.row,self.column,"SEMANTICO"))
                                     break
                             CODE += f'  printf(\"%c\",(char) 10);\n'
-                            return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,CODE,None)
-                        else:
-                            listError.append(Error("Error: No ha ingresado el número de expresiones correctas en función de los \'{ }\' que ha escrito","Local",self.row,self.column,"SEMANTICO"))
-                    else:
-                        listError.append(Error("Error: Solo se puede imprimir una cadena como primera instrucctión de un println","Local",self.row,self.column,"SEMANTICO"))
-                else:
-                    listError.append(Error("Error: Solo se puede imprimir una cadena como primera instrucctión de un println","Local",self.row,self.column,"SEMANTICO"))
-            else:
-                listError.append(Error("Error: No se pudo ejecutar la instrucción println","Local",self.row,self.column,"SEMANTICO"))
+                            return Retorno(None,None,None,None,CODE,None,None)
+                        else:listError.append(Error("Error: No ha ingresado el número de expresiones correctas en función de los \'{ }\' que ha escrito","Local",self.row,self.column,"SEMANTICO"))
+                    else:listError.append(Error("Error: Solo se puede imprimir una cadena como primera instrucctión de un println","Local",self.row,self.column,"SEMANTICO"))
+                else:listError.append(Error("Error: Solo se puede imprimir una cadena como primera instrucctión de un println","Local",self.row,self.column,"SEMANTICO"))
+            else:listError.append(Error("Error: No se pudo ejecutar la instrucción println","Local",self.row,self.column,"SEMANTICO"))
         else:
             value = self.expList[0].compile(enviroment)
             if value != None:
@@ -74,7 +70,8 @@ class Print(Instruccion):
                     if value.typeVar == TYPE_DECLARATION.STRING or value.typeVar == TYPE_DECLARATION.aSTRING:
                         CODE = "/* PRINT */\n"
                         CODE += self.printString(enviroment,value)
-                        return Retorno(TYPE_DECLARATION.INSTRUCCION,None,None,None,None,CODE,None)
+                        CODE += f'  printf(\"%c\",(char) 10);\n'
+                        return Retorno(None,None,None,None,CODE,None,None)
                     else:
                         listError.append(Error("Error: La instrucción println necesita \'{ }\' para imprimir literales que no sean cadenas","Local",self.row,self.column,"SEMANTICO"))
                 else:
@@ -86,16 +83,12 @@ class Print(Instruccion):
         CODE = ''
         if value.typeVar == TYPE_DECLARATION.INTEGER or value.typeVar == TYPE_DECLARATION.USIZE: 
             CODE = f'  printf(\"%d\",(int) {value.temporal});\n'
-        elif value.typeVar == TYPE_DECLARATION.STRING or value.typeVar == TYPE_DECLARATION.aSTRING:
-            singleString = Literal(value.value,2).compile(enviroment)
-            CODE = self.printString(enviroment, singleString)
         elif value.typeVar == TYPE_DECLARATION.FLOAT:
             CODE = f'  printf(\"%f\",(float) {value.temporal});\n'
         elif value.typeVar == TYPE_DECLARATION.CHAR:
             CODE = f'  printf(\"%c\",(char) {value.temporal});\n'
-        else:
-            singleString = Literal(value.value,2).compile(enviroment)
-            CODE = self.printString(enviroment, singleString)
+        else: #STRING y aSTRING
+            CODE = self.printString(enviroment, value)
         return CODE
 
     def printString(self, enviroment, value):
@@ -111,7 +104,7 @@ class Print(Instruccion):
         CODE += f'  printf(\"%c\",(char) {caracter});\n'
         CODE += f'  {temporal} = {temporal} + 1;\n'
         CODE += f'  goto {cycleLabel};\n'
-        CODE += exitLabel + ": \n"
+        CODE += f'{exitLabel}: \n'
         return CODE
 
     def printArray(self, array):

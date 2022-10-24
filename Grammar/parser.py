@@ -1,5 +1,4 @@
 from AST.Abstracts.Retorno import TYPE_DECLARATION, Retorno
-from AST.Symbol.Generator import Generator
 from AST.Expressions.AccessTypeArray import AccessTypeArray
 from AST.Expressions.AccessTypeVector import AccessTypeVector
 from AST.Expressions.ModInstruction import ModInstruction
@@ -9,7 +8,6 @@ from AST.Expressions.ParamReference import ParamReference
 from AST.Expressions.CallNative import CallNative, TYPE_NATIVE
 from AST.Expressions.ForIterative import ForIterative
 from AST.Expressions.Literal import Literal
-from AST.Expressions.LiteralType import LiteralType
 from AST.Expressions.Access import Access
 from AST.Expressions.AccessArray import AccessArray
 from AST.Expressions.AccessInstruction import AccessInstruction
@@ -48,6 +46,7 @@ from AST.Instructions.Break import Break
 from AST.Instructions.Continue import Continue
 from AST.Instructions.Return import Return
 from AST.Expressions.Handler import Handler
+from AST.Symbol.Generator import Generator
 from AST.Symbol.Enviroment import Enviroment
 from AST.Symbol.Symbol import Symbol
 from Grammar.lexer import tokens
@@ -78,13 +77,9 @@ def p_instrucciones_g(t):
     else: t[0] = [t[1]]
 
 def p_instruccion(t):
-    '''instruccion_g : declaracion PCOMA
-    | asignacion PCOMA
-    | print PCOMA
-    | if
-    | while'''
-    #| struct
-    #| funcion'''
+    '''instruccion_g : modulo
+    | struct
+    | funcion'''
     t[0] = t[1]
 
 def p_instrucciones_l(t):
@@ -531,13 +526,13 @@ def p_tipo_var(t):
     | lista_classtype
     | VECTOR MENOR tipo_var MAYOR
     | VECTOR MENOR lista_classtype MAYOR'''
-    if t.slice[1].type == 'I64' : t[0] = LiteralType(None,0)
-    elif t.slice[1].type == 'F64' : t[0] = LiteralType(None,1)
-    elif t.slice[1].type == 'STRING' : t[0] = LiteralType(None,2)
-    elif t.slice[1].type == 'ANDSINGLE' : t[0] = LiteralType(None,3)
-    elif t.slice[1].type == 'BOOL' : t[0] = LiteralType(None,4)
-    elif t.slice[1].type == 'CHAR' : t[0] = LiteralType(None,5)
-    elif t.slice[1].type == 'USIZE' : t[0] = LiteralType(None,6)
+    if t.slice[1].type == 'I64' : t[0] = Literal(None,0)
+    elif t.slice[1].type == 'F64' : t[0] = Literal(None,1)
+    elif t.slice[1].type == 'STRING' : t[0] = Literal(None,2)
+    elif t.slice[1].type == 'ANDSINGLE' : t[0] = Literal(None,3)
+    elif t.slice[1].type == 'BOOL' : t[0] = Literal(None,4)
+    elif t.slice[1].type == 'CHAR' : t[0] = Literal(None,5)
+    elif t.slice[1].type == 'USIZE' : t[0] = Literal(None,6)
     elif t.slice[1].type == 'lista_classtype' : t[0] = AccessInstruction(t[1],t.lineno(1), t.lexpos(1))
     elif t.slice[1].type == 'lista_arr2' : t[0] = t[1]
     elif t.slice[1].type == 'LCOR' : t[0] = AccessTypeArray(t[2],t.lineno(1), t.lexpos(1))
@@ -608,26 +603,24 @@ globalEnv = None
 
 def startParser(text,console):
     content = parser.parse(text)
-    generator = Generator()
     if text != '':
         global globalEnv
-        globalEnv = Enviroment(generator,None)
+        globalGen = Generator()
+        globalEnv = Enviroment(None,globalGen)
         for instruction in content:
-            result = instruction.compile(globalEnv)
-            if result != None:
-                generator.agregarInstruccion(result)
-        print(generator.generarMain())
-        '''
             if isinstance(instruction, Modulo) or isinstance(instruction, Struct) or isinstance(instruction, Function):
-                instruction.executeInstruction(globalEnv)
+                instruction.compile(globalEnv)
         founded = globalEnv.getFunction('main')
         if founded != None:
-            CallFunction('main',[],0,0).executeInstruction(globalEnv)
+            returnedMain = CallFunction('main',[],0,0)
+            returnedMain.isMain = True
+            returnedMain.compile(globalEnv)
+            print(globalGen.generateHeader())
+            print(globalGen.code)
         else:
             print("Error: No fué encontrada una función main")
             #except:
             #    print("Error: La instrucción no se puede ejecutar de forma global")
-            '''
 
 def getGlobalEnv():
     global globalEnv

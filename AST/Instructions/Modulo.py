@@ -8,6 +8,6 @@ class Modulo(Instruccion):
         self.row = row
         self.column = column
 
-    def executeInstruction(self, enviroment):
+    def compile(self, enviroment):
         #Guardar modulo
         enviroment.saveModule(self.id, self)

@@ -8,5 +8,5 @@ class AttDeclaration():
         self.id = id
         self.type = type
 
-    def executeInstruction(self,enviroment):
-        return self.type.executeInstruction(enviroment)
+    def compile(self,enviroment):
+        return self.type.compile(enviroment)

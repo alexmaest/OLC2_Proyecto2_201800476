@@ -11,14 +11,14 @@ class ListArraySimple(Instruccion):
         if isinstance(self.parameters,ListArraySimple):
             returned = self.createArrays(self,enviroment)
             if returned != None:
-                return Retorno(TYPE_DECLARATION.VALOR,returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY,None,None,None)
+                return Retorno(None,returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY,None,None,None)
             else: return None
         else:
             typeVar = self.parameters.compile(enviroment)
             exp = self.expression.compile(enviroment)
             if typeVar != None and exp != None:
                 list = [0] * exp.value
-                return Retorno(TYPE_DECLARATION.VALOR,typeVar.typeVar,list,TYPE_DECLARATION.ARRAY,None,None,None)
+                return Retorno(None,typeVar.typeVar,list,TYPE_DECLARATION.ARRAY,None,None,None)
             else: return None
 
     def createArrays(self,listArray,enviroment):

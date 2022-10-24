@@ -27,4 +27,4 @@ class Loop(Instruccion):
         CODE += returned.code
         CODE += f'  goto {loopLabel};\n'
         CODE += breakLabel
-        return Retorno(returned.typeIns,returned.typeVar,returned.value,returned.typeSingle,None,CODE,None)
+        return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)

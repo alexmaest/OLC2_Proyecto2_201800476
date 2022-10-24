@@ -8,4 +8,4 @@ class Continue(Instruccion):
     def compile(self, enviroment):
         CODE = '/* CONTINUE */\n'
         CODE += f'  goto ContinueLabel;\n'
-        return Retorno(TYPE_DECLARATION.VALOR,None,None,None,None,CODE,None)
+        return Retorno(TYPE_DECLARATION.CONTINUE,None,None,None,CODE,None)

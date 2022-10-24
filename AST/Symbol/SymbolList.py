@@ -3,6 +3,8 @@ listStructs = []
 listFunctions = []
 listVariables = []
 
+listStructsAux = []
+
 def addModule(module):
     global listModules
     listModules.append(module)
@@ -31,6 +33,9 @@ def getFunctionList():
 def getVariableList():
     return listVariables
 
+def getStructAuxList():
+    return listStructsAux
+
 def setModuleList(list):
     global listModules
     listModules = list
@@ -46,3 +51,14 @@ def setFunctionList(list):
 def setVariableList(list):
     global listVariables
     listVariables = list
+
+def setStructListAux(list):
+    global listStructsAux
+    listStructsAux = list
+
+def searchInListStructsAux(id):
+    global listStructsAux
+    for single in listStructsAux:
+        if single.id == id:
+            return single
+    return None

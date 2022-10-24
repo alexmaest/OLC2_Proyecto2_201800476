@@ -18,11 +18,9 @@ class CallFunction():
         self.newEnviroment = None 
         self.newFunction = None
         self.isMain = False
-        self.positions = []
 
     def compile(self,enviroment):
         #Buscar función
-        self.positions = []
         Fail = False
         founded = None
         newEnv = None
@@ -36,11 +34,11 @@ class CallFunction():
         if founded != None or self.newEnviroment != None:
             #Ejecución de parametros
             if len(self.parameters) == len(founded.parameters):
+                count = 0
                 if self.isMain:
                     newEnv.isMain = True
                     founded.statement.isMain = True
                 else:pass
-                count = 0
                 PARAM_CODE = '/* PARAMETROS */\n'
                 for param in founded.parameters:
                     if isinstance(self.parameters[count], AttAccess) or isinstance(self.parameters[count], ParamReference):
@@ -55,10 +53,9 @@ class CallFunction():
                                 if not isinstance(self.parameters[count], AttAccess):
                                     if self.parameters[count].reference == param.reference:
                                         if param.reference:
-                                            self.positions.append(count)
                                             singleValue = self.parameters[count].compile(enviroment)
                                             referenceVar = enviroment.getVariable(self.parameters[count].id.id)
-                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,referenceVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal),self.row,self.column)   
+                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,referenceVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
                                             singleParam.newEnv = newEnv
                                             singleParam.isParam = True
                                             singleParam.oldSize = enviroment.size
@@ -67,7 +64,7 @@ class CallFunction():
                                             count+=1
                                         else:
                                             singleValue = self.parameters[count].compile(enviroment)
-                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.value,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal),self.row,self.column)   
+                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
                                             singleParam.newEnv = newEnv
                                             singleParam.isParam = True
                                             singleParam.oldSize = enviroment.size
@@ -80,7 +77,7 @@ class CallFunction():
                                 else:
                                     if not param.reference:
                                         singleValue = self.parameters[count].compile(enviroment)
-                                        singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.value,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal),self.row,self.column)   
+                                        singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
                                         singleParam.newEnv = newEnv
                                         singleParam.isParam = True
                                         singleParam.oldSize = enviroment.size
@@ -111,8 +108,7 @@ class CallFunction():
                     CODE = ''
                     if not self.isMain:
                         CODE = f'/* LLAMADA A LA FUNCIÓN {self.id} */\n'
-                        if len(founded.parameters) > 0:
-                            CODE += PARAM_CODE
+                        if len(founded.parameters) > 0: CODE += PARAM_CODE
                         CODE += f'  SP = SP + {enviroment.size};\n'
                         CODE += f'  {self.id}();\n'
                         CODE += f'  SP = SP - {enviroment.size};\n'
@@ -127,50 +123,43 @@ class CallFunction():
                     callTypeVar = None
                     callTypeSingle = None
                     returnTemporal = None
-                    callTypeIns = TYPE_DECLARATION.INSTRUCCION
-                    if returnedValue.typeIns == TYPE_DECLARATION.VALOR:
-                        if returnedValue != None and founded.type != None:
-                            if returnedValue.typeSingle != TYPE_DECLARATION.BREAK and returnedValue.typeSingle != TYPE_DECLARATION.CONTINUE:
-                                typeReturned = founded.type.compile(newEnv)
-                                if typeReturned != None:
-                                    callTypeIns = TYPE_DECLARATION.VALOR
-                                    callTypeVar = returnedValue.typeVar
-                                    callTypeSingle = returnedValue.typeSingle
+                    callAtt = None
+                    if returnedValue.typeVar != None and founded.type != None:
+                        typeReturned = founded.type.compile(newEnv)
+                        if typeReturned != None:
+                            if returnedValue.typeVar == typeReturned.typeVar:
+                                if returnedValue.typeSingle == typeReturned.typeSingle:
                                     temporal = enviroment.generator.generateTemporal()
                                     returnTemporal = enviroment.generator.generateTemporal()
+                                    callTypeVar = returnedValue.typeVar
+                                    callTypeSingle = returnedValue.typeSingle
+                                    callAtt = returnedValue.att
                                     CODE += f'  {temporal} = SP + {enviroment.size};\n'
                                     CODE += f'  {returnTemporal} = Stack[(int){temporal}];\n'
-                                else: listError.append(Error("Error: La función "+str(founded.id)+" no puede retornar un valor porque no tiene un tipo de valor declarado","Local",self.row,self.column,"SEMANTICO"))
-                            else: listError.append(Error("Error: Una función no puede retornar una sentencia break sin expresión o continue","Local",self.row,self.column,"SEMANTICO"))
-                        elif returnedValue != None and founded.type == None:
-                            listError.append(Error("Error: No puede retornar valores en la función "+str(self.id)+" tipo void","Local",self.row,self.column,"SEMANTICO"))
-                        elif returnedValue == None and founded.type != None:
-                            listError.append(Error("Error: Debe de retonar algún valor en esta función","Local",self.row,self.column,"SEMANTICO"))
-                        else: pass #ya se validó todo
+                                else: listError.append(Error("Error: El tipo de dimensión para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
+                            else: listError.append(Error("Error: El tipo de dato para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
+                        else: listError.append(Error("Error: El tipo de dato declarado para la función "+str(founded.id)+" no es valido","Local",self.row,self.column,"SEMANTICO"))
+                    elif returnedValue.typeVar != None and founded.type == None:
+                        listError.append(Error("Error: No puede retornar valores en la función "+str(self.id)+" tipo void","Local",self.row,self.column,"SEMANTICO"))
+                    elif returnedValue.typeVar == None and founded.type != None:
+                        listError.append(Error("Error: Debe de retonar algún valor en esta función","Local",self.row,self.column,"SEMANTICO"))
                     else: pass #ya se validó todo
 
-                    #Modificar de regreso las variables que se enviaron con referencia
-                    for number in self.positions:
-                        returned = founded.statement.newEnv.getVariable(founded.parameters[number].id)
-                        if returned != None:
-                            if isinstance(self.parameters[number], AttAccess):
-                                exist = enviroment.editVariable(self.parameters[number].id, returned.value)
-                            else:
-                                exist = enviroment.editVariable(self.parameters[number].id.id, returned.value)
-                    return Retorno(callTypeIns,callTypeVar,returnedValue.value,callTypeSingle,None,CODE,returnTemporal)
-            else:
-                listError.append(Error("Error: El número de parametros que ingresó para la función "+str(self.id)+"no son los correctos","Local",self.row,self.column,"SEMANTICO"))
-        else:
-            listError.append(Error("Error: No se pudo encontrar la función con id "+str(self.id),"Local",self.row,self.column,"SEMANTICO"))
+                    #Retorno de la llamada
+                    return Retorno(None,callTypeVar,callTypeSingle,None,CODE,returnTemporal,callAtt)
+
+            else: listError.append(Error("Error: El número de parametros que ingresó para la función "+str(self.id)+"no son los correctos","Local",self.row,self.column,"SEMANTICO"))
+        else: listError.append(Error("Error: No se pudo encontrar la función con id "+str(self.id),"Local",self.row,self.column,"SEMANTICO"))
 
     def generateFunction(self, function, enviroment, functionCode):
         if not function.generated:
-            returnLabel = ''
             result = re.findall("ReturnLabel",functionCode)
+            returnLabel = ''
             if len(result) > 0:
                 returnLabel = enviroment.generator.generateLabel()
                 functionCode = functionCode.replace("ReturnLabel",returnLabel)
                 returnLabel = returnLabel + ':\n'
+            else:pass
             CODE = f'void {function.id}(){{\n'
             CODE += functionCode
             CODE += returnLabel
@@ -178,6 +167,4 @@ class CallFunction():
             CODE += '}\n\n'
             enviroment.generator.addFunction(CODE)
             function.generated = True
-        else:
-            #La función ya se ha generado anteriormente
-            pass
+        else:pass #La función ya se ha generado anteriormente

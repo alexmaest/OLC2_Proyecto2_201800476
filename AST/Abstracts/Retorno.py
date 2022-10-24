@@ -1,9 +1,6 @@
 from enum import Enum
 
 class TYPE_DECLARATION(Enum):
-    #Tipos de retornos
-    INSTRUCCION = 15
-    VALOR = 16
     #Tipos de variables
     INTEGER = 0,
     FLOAT = 1,
@@ -24,14 +21,14 @@ class TYPE_DECLARATION(Enum):
     CONTINUE = 14
 
 class Retorno():
-    def __init__(self, typeIns, typeVar, value, typeSingle, label, code, temporal):
+    def __init__(self, typeIns, typeVar, typeSingle, label, code, temporal, att):
         self.typeIns = typeIns
         self.typeVar = typeVar
-        self.value = value
         self.typeSingle = typeSingle
         self.label = label
         self.code = code
         self.temporal = temporal
+        self.att = att
         self.trueLabel = ''
         self.falseLabel = ''
     

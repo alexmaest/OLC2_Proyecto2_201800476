@@ -15,6 +15,7 @@ class If(Instruccion):
         condition = self.condition.compile(enviroment)
         if condition != None:
             if condition.typeVar == TYPE_DECLARATION.BOOLEAN:
+                #Generamos codigo de las instrucciones
                 exitLabel = enviroment.generator.generateLabel()
                 returned = self.statement.compile(enviroment)
                 CODE = "/* IF */\n"
@@ -23,10 +24,11 @@ class If(Instruccion):
                 CODE += returned.code
                 CODE += f'  goto {exitLabel};\n'
                 CODE += f'{condition.falseLabel}: \n'
+                #Comprobamos si hay un Else if o Else
                 if self.other != None:
                     returned2 = self.other.compile(enviroment)
                     CODE += returned2.code
+                #Se añade la etiqueta de salida
                 CODE += f'{exitLabel}:\n'
-                return Retorno(returned.typeIns,returned.typeVar,returned.value,returned.typeSingle,None,CODE,None)
-            else:
-                listError.append(Error("Error: La condición no es un booleano","Local",self.row,self.column,"SEMANTICO"))
+                return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)
+            else:listError.append(Error("Error: La condición no es un booleano","Local",self.row,self.column,"SEMANTICO"))

@@ -7,5 +7,5 @@ class AttCall():
         self.id = id
         self.expression = expression
 
-    def executeInstruction(self,enviroment):
-        return self.expression.executeInstruction(enviroment)
+    def compile(self,enviroment):
+        return self.expression.compile(enviroment)

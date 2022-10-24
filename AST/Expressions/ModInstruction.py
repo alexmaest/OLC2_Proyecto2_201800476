@@ -6,5 +6,5 @@ class ModInstruction():
         self.isPublic = isPublic
         self.instruction = instruction
     
-    def executeInstruction(self, enviroment):
-        self.instruction.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        self.instruction.compile(enviroment)

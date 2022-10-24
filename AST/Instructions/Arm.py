@@ -6,8 +6,8 @@ class Arm(Instruccion):
         self.expressions = expressions
         self.instructions = instructions
 
-    def executeInstruction(self, enviroment):
-        return self.instructions.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        return self.instructions.compile(enviroment)
 
     def getExpressions(self):
         return self.expressions

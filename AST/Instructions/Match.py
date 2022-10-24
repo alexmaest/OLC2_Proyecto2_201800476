@@ -45,8 +45,7 @@ class Match(Instruccion):
                                 if returned != None:
                                     if singleExp.typeVar == returned.typeVar:
                                         if singleExp.typeSingle == returned.typeSingle:
-                                            if falseLabel != '':
-                                                CODE += f'{falseLabel}:\n'
+                                            if falseLabel != '': CODE += f'{falseLabel}:\n'
                                             trueLabel = enviroment.generator.generateLabel()
                                             falseLabel = enviroment.generator.generateLabel()
                                             CODE += returned.code
@@ -70,8 +69,7 @@ class Match(Instruccion):
                             if returned != None:
                                 if singleExp.typeVar == returned.typeVar:
                                     if singleExp.typeSingle == returned.typeSingle:
-                                        if falseLabel != '':
-                                            CODE += f'{falseLabel}:\n'
+                                        if falseLabel != '': CODE += f'{falseLabel}:\n'
                                         trueLabel = enviroment.generator.generateLabel()
                                         falseLabel = enviroment.generator.generateLabel()
                                         CODE += returned.code
@@ -96,11 +94,7 @@ class Match(Instruccion):
                         CODE += instructions.code
                         CODE += f'   goto {exitLabel};\n'
                 CODE += f'{exitLabel}:\n'
-                if fail:
-                    return None
-                else:
-                    return Retorno(returned.typeIns,returned.typeVar,returned.value,returned.typeSingle,None,CODE,None)
-            else:
-                listError.append(Error("Error: El brazo '_' debe de ser el último de la sentencia match","Local",self.row,self.column,"SEMANTICO"))
-        else:
-            listError.append(Error("Error: No se ha podido ejecutar la sentencia match porque su valor a comparar es nulo","Local",self.row,self.column,"SEMANTICO"))
+                if fail: return None
+                else: return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)
+            else:listError.append(Error("Error: El brazo '_' debe de ser el último de la sentencia match","Local",self.row,self.column,"SEMANTICO"))
+        else:listError.append(Error("Error: No se ha podido ejecutar la sentencia match porque su valor a comparar es nulo","Local",self.row,self.column,"SEMANTICO"))

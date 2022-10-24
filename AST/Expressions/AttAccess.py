@@ -1,5 +1,7 @@
+from typing import TYPE_CHECKING
 from AST.Abstracts.Expression import Expression
-from AST.Abstracts.Retorno import Retorno
+from AST.Expressions.AccessInstruction import AccessInstruction
+from AST.Abstracts.Retorno import TYPE_DECLARATION, Retorno
 from AST.Expressions.AccessArray import AccessArray
 from AST.Expressions.AttAssign import AttAssign
 from AST.Expressions.CallNative import CallNative
@@ -7,6 +9,7 @@ from AST.Expressions.Handler import Handler
 from AST.Instructions.Native import Native
 from AST.Error.Error import Error
 from AST.Error.ErrorList import listError
+from AST.Symbol.SymbolList import searchInListStructsAux
 from enum import Enum
 
 class AttAccess():
@@ -34,27 +37,57 @@ class AttAccess():
                 return singleId
             else:
                 #Se retornan atributos de structs
-                return self.foundAttribute(exist, self.expList, 1, enviroment)
-        else:
-            listError.append(Error("Error: La variable "+str(self.expList[0].id.id)+"no existe","Local",self.row,self.column,"SEMANTICO"))
+                if isinstance(self.expList[0].id.id,AccessArray):
+                    return self.returnAttribute(exist,exist.typeVar,self.expList,1,exist.temporal,enviroment)
+                else:
+                    temporal = enviroment.generator.generateTemporal()
+                    returned = self.returnAttribute(exist,exist.typeVar,self.expList,1,exist.temporal,enviroment)
+                    if returned != None:                    
+                        CODE = f'  {temporal} = Heap[(int) {exist.temporal}];\n'
+                        CODE += returned.code
+                        return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,returned.label,CODE,returned.temporal,returned.att)
+                    return None
+        else:listError.append(Error("Error: La struct "+str(self.expList[0].id.id)+" no existe","Local",self.row,self.column,"SEMANTICO"))
     
-    def foundAttribute(self, variable, list, number, enviroment):
-        if isinstance(list[number].id,CallNative):
-            callNativeFunction = Native(Handler(variable.typeVar,variable.value,variable.typeSingle),list[number].id,self.row,self.column)
+    def returnAttribute(self, variable, accesstypeVar, attList, number, temporal, enviroment):
+        foundedStruct = searchInListStructsAux(accesstypeVar)
+        if isinstance(attList[number].id,CallNative):
+            callNativeFunction = Native(Handler(variable.typeIns,variable.typeVar,variable.typeSingle,variable.label,variable.code,variable.temporal,variable.att),list[number].id,self.row,self.column)
             return callNativeFunction.compile(enviroment)
         else:
-            if list[number].id in variable.value:
-                if variable.value[list[number].id].value[0]:
-                    typeVar = variable.value[list[number].id].typeVar
-                    value = variable.value[list[number].id].value
-                    typeSingle = variable.value[list[number].id].typeSingle
-                    if (number + 1) == len(list):
-                        return Retorno(typeVar,value[1],typeSingle)
-                    else:
-                        return self.foundAttribute(Retorno(typeVar,value[1],typeSingle), list, number+1, enviroment)
-                else:
-                    listError.append(Error("Error: El atributo "+str(list[number].id)+" de la instrucción no es público","Local",self.row,self.column,"SEMANTICO"))
-                    return None
+            cont = 0
+            if foundedStruct != None:
+                for att in foundedStruct.attributes:
+                    if att.id == attList[number]:
+                        if att.isPublic:
+                            singleAtt = []
+                            singleAtt.append(attList[number])
+                            type = AccessInstruction(singleAtt,-1,-1)
+                            type.isAux = True
+                            returned = type.compile(enviroment)
+                            if returned != None:
+                                temporal1 = enviroment.generator.generateTemporal()
+                                if returned.typeSingle == TYPE_DECLARATION.STRUCT:
+                                    temporal2 = enviroment.generator.generateTemporal()
+                                    CODE = '/* ACCEDIENDO A ATRIBUTO */\n'
+                                    CODE += f'  {temporal1} = {temporal} + {cont};\n'#Posición del atributo
+                                    CODE += f'  {temporal2} = Heap[(int) {temporal1}];\n'#Posicion del Objeto atributo
+                                    returned = self.returnAttribute(variable,returned.typeVar,attList,(number+1),temporal2,enviroment)
+                                    if returned != None:
+                                        CODE += returned.code
+                                        return Retorno(None,returned.typeVar,returned.typeSingle,None,CODE,returned.temporal,None)
+                                    else: return None
+                                else:
+                                    CODE = '/* ACCEDIENDO A ATRIBUTO */\n'
+                                    CODE += f'  {temporal1} = {temporal} + {cont};\n'#Posición del atributo
+                                    return Retorno(None,returned.typeVar,returned.typeSingle,None,CODE,temporal1,None)
+                            else: return None
+                        else: 
+                            listError.append(Error("Error: El atributo con id \'"+str(attList[number])+"\' no es público para asignarle valores","Local",self.row,self.column,"SEMANTICO"))
+                            return None
+                    else:cont += 1
+                listError.append(Error("Error: No se ha encontrado el atributo \'"+str(attList[number])+"\'","Local",self.row,self.column,"SEMANTICO"))
+                return None
             else:
-                listError.append(Error("Error: Atributo "+str(list[number].id)+" no encontrado de la variable "+str(list[0].id.id),"Local",self.row,self.column,"SEMANTICO"))
+                listError.append(Error("Error: El struct al que desea acceder con id "+str(accesstypeVar)+" no existe","Local",self.row,self.column,"SEMANTICO"))
                 return None

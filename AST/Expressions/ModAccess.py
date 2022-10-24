@@ -18,7 +18,7 @@ class ModAccess():
         self.row = row
         self.column = column
     
-    def executeInstruction(self, enviroment):
+    def compile(self, enviroment):
         #Se retornan funciones dentro de modulos
         found = enviroment.getModule(self.nameList[0])#Modulo()
         if found != None:
@@ -31,7 +31,7 @@ class ModAccess():
     def saveModuleInstructions(self, nameList, module, enviroment, number, permanentEnv):
         newEnv = Enviroment(enviroment,enviroment.console)
         for instruction in module.instructions.instructions:
-            instruction.executeInstruction(newEnv)
+            instruction.compile(newEnv)
 
         for instruction in module.instructions.instructions:
             if instruction.instruction.id == nameList[number]:
@@ -42,7 +42,7 @@ class ModAccess():
                             #Si el id coincide con la funcion dentro del modulo
                             self.functionCall.newFunction = returned
                             self.functionCall.newEnviroment = newEnv
-                            return self.functionCall.executeInstruction(permanentEnv)
+                            return self.functionCall.compile(permanentEnv)
                         else:
                             listError.append(Error("Error: La función "+str(nameList[number])+" no es pública","Local",self.row,self.column,"SEMANTICO"))
                             return None
@@ -62,4 +62,3 @@ class ModAccess():
                         return None
         listError.append(Error("Error: No existe ningún modulo, struct o función con el nombre "+str(nameList[number]),"Local",self.row,self.column,"SEMANTICO"))
         return None
-

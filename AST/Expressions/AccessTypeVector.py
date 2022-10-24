@@ -6,9 +6,7 @@ class AccessTypeVector():
     def __init__(self, accessType):
         self.accessType = accessType
 
-    def executeInstruction(self, enviroment):
-            returned = self.accessType.executeInstruction(enviroment)
-            if returned != None:
-                return Retorno(returned.typeVar,returned.value,TYPE_DECLARATION.VECTOR)
-            else:
-                return None
+    def compile(self, enviroment):
+        returned = self.accessType.compile(enviroment)
+        if returned != None:return Retorno(None,returned.typeVar,TYPE_DECLARATION.VECTOR,None,returned.code,None)
+        else:return None

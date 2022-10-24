@@ -12,27 +12,29 @@ class CallStruct():
     def __init__(self, id, parameters, row, column):
         self.id = id
         self.parameters = parameters
-        self.content = {}
         self.row = row
         self.column = column
 
-    def executeInstruction(self,enviroment):
+    def compile(self,enviroment):
         #Buscar struct
-        single = self.id.executeInstruction(enviroment)
-        self.content = {}
+        single = self.id.compile(enviroment)
         if(single != None):
-            founded = single.value
+            founded = single.att #Nueva ubicación de atributos
             if len(self.parameters) == len(founded):
+                temporal = enviroment.generator.generateTemporal()
+                CODE = '/* CREANDO STRUCT */\n'
+                CODE += f'  {temporal} = HP;\n'
+                CODE += f'  HP = HP + {len(self.parameters)};\n'
                 for param in range(len(self.parameters)):
                     if self.parameters[param].id == founded[param].id:
-                        callExp = self.parameters[param].executeInstruction(enviroment)
-                        callType = founded[param].executeInstruction(enviroment)
+                        callExp = self.parameters[param].compile(enviroment)
+                        callType = founded[param].compile(enviroment)
                         if callExp != None and callType != None:
                             if callExp.typeVar == callType.typeVar and callExp.typeSingle == callType.typeSingle:
-                                content = []
-                                content.append(founded[param].isPublic)
-                                content.append(callExp.value)
-                                self.content[self.parameters[param].id] = Retorno(callExp.typeVar,content,callExp.typeSingle)
+                                temporal2 = enviroment.generator.generateTemporal()
+                                CODE += callExp.code
+                                CODE += f'  {temporal2} = {temporal} + {param};\n'
+                                CODE += f'  Heap[(int) {temporal2}] = {callExp.temporal};\n'
                             else:
                                 listError.append(Error("Error: El parámetro no coincide con el tipo de dato declarado en el struct "+str(self.id.idList[0]),"Local",self.row,self.column,"SEMANTICO"))
                                 return None
@@ -42,7 +44,7 @@ class CallStruct():
                     else:
                         listError.append(Error("Error: No coincide el parámetro \'"+str(self.parameters[param].id)+"\' para el struct "+str(self.id.idList[0]),"Local",self.row,self.column,"SEMANTICO"))
                         return None
-                return Retorno(self.id.idList[-1],self.content,TYPE_DECLARATION.STRUCT)
+                return Retorno(None,self.id.idList[-1],TYPE_DECLARATION.STRUCT,None,CODE,temporal,founded)
             else:
                 listError.append(Error("Error: El número de atributos del struct "+str(self.id)+"no es el correcto","Local",self.row,self.column,"SEMANTICO"))
                 return None

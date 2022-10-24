@@ -38,8 +38,6 @@ class While(Instruccion):
                 CODE += f'  goto {whileLabel};\n'
                 CODE += f'{condition.falseLabel}: \n'
                 CODE += breakLabel
-                return Retorno(returned.typeIns,returned.typeVar,returned.value,returned.typeSingle,None,CODE,None)
-            else:
-                listError.append(Error("Error: La condición no es un booleano","Local",self.row,self.column,"SEMANTICO"))
-        else:
-            listError.append(Error("Error: No se ha podido ejecutar la sentencia While","Local",self.row,self.column,"SEMANTICO"))
+                return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)
+            else:listError.append(Error("Error: La condición no es un booleano","Local",self.row,self.column,"SEMANTICO"))
+        else:listError.append(Error("Error: No se ha podido ejecutar la sentencia While","Local",self.row,self.column,"SEMANTICO"))
