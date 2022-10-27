@@ -54,8 +54,7 @@ class CallFunction():
                                     if self.parameters[count].reference == param.reference:
                                         if param.reference:
                                             singleValue = self.parameters[count].compile(enviroment)
-                                            referenceVar = enviroment.getVariable(self.parameters[count].id.id)
-                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,referenceVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
+                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
                                             singleParam.newEnv = newEnv
                                             singleParam.isParam = True
                                             singleParam.oldSize = enviroment.size
@@ -106,6 +105,7 @@ class CallFunction():
                 if not Fail:
                     #Generar codigo de la función
                     CODE = ''
+                    returnedValue = None
                     if not self.isMain:
                         CODE = f'/* LLAMADA A LA FUNCIÓN {self.id} */\n'
                         if len(founded.parameters) > 0: CODE += PARAM_CODE
@@ -114,10 +114,8 @@ class CallFunction():
                         CODE += f'  SP = SP - {enviroment.size};\n'
                         founded.statement.newEnv = newEnv
                         returnedValue = founded.statement.compile(newEnv)
-                        self.generateFunction(founded,enviroment,returnedValue.code)
                     else:
                         returnedValue = founded.statement.compile(newEnv)
-                        self.generateFunction(founded,enviroment,returnedValue.code)
                     
                     #Retornar valor si lo tiene
                     callTypeVar = None
@@ -136,14 +134,25 @@ class CallFunction():
                                     callAtt = returnedValue.att
                                     CODE += f'  {temporal} = SP + {enviroment.size};\n'
                                     CODE += f'  {returnTemporal} = Stack[(int){temporal}];\n'
-                                else: listError.append(Error("Error: El tipo de dimensión para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
-                            else: listError.append(Error("Error: El tipo de dato para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
-                        else: listError.append(Error("Error: El tipo de dato declarado para la función "+str(founded.id)+" no es valido","Local",self.row,self.column,"SEMANTICO"))
+                                else: 
+                                    listError.append(Error("Error: El tipo de dimensión para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
+                                    return None
+                            else: 
+                                listError.append(Error("Error: El tipo de dato para la función "+str(founded.id)+" no es valido con el valor que intenta retornar","Local",self.row,self.column,"SEMANTICO"))
+                                return None
+                        else: 
+                            listError.append(Error("Error: El tipo de dato declarado para la función "+str(founded.id)+" no es valido","Local",self.row,self.column,"SEMANTICO"))
+                            return None
                     elif returnedValue.typeVar != None and founded.type == None:
                         listError.append(Error("Error: No puede retornar valores en la función "+str(self.id)+" tipo void","Local",self.row,self.column,"SEMANTICO"))
+                        return None
                     elif returnedValue.typeVar == None and founded.type != None:
                         listError.append(Error("Error: Debe de retonar algún valor en esta función","Local",self.row,self.column,"SEMANTICO"))
+                        return None
                     else: pass #ya se validó todo
+
+                    #Agregar código de la función generada
+                    self.generateFunction(founded,enviroment,returnedValue.code)
 
                     #Retorno de la llamada
                     return Retorno(None,callTypeVar,callTypeSingle,None,CODE,returnTemporal,callAtt)

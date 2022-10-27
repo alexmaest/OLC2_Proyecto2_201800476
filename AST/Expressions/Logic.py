@@ -15,38 +15,62 @@ class Logic():
         self.rExp = rExp
         self.row = row
         self.column = column
+        self.trueLabel = ''
+        self.falseLabel = ''
     
     def compile(self, enviroment):
-        leftValue = self.lExp.compile(enviroment)
-        rightValue = self.rExp.compile(enviroment)
-        
-        if leftValue != None and rightValue != None:
-            CODE = ''
-            if self.type == TYPE_LOGICAL.AND:
-                result = leftValue.value and rightValue.value
-                CODE += leftValue.code
+        if self.type == TYPE_LOGICAL.AND:
+            #Se colocan las respectivas etiquetas
+            self.lExp.trueLabel = enviroment.generator.generateLabel()
+            self.lExp.falseLabel = self.falseLabel 
+            self.rExp.trueLabel = self.trueLabel 
+            self.rExp.falseLabel = self.falseLabel 
+            #Se compilan las expresiones
+            leftValue = self.lExp.compile(enviroment)
+            rightValue = self.rExp.compile(enviroment)
+            if leftValue != None and rightValue != None:
+                CODE = leftValue.code
                 CODE += f'{leftValue.trueLabel}:\n'
                 CODE += rightValue.code
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = rightValue.trueLabel
-                value.falseLabel = f'{leftValue.falseLabel}:\n{rightValue.falseLabel}'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
-            elif self.type == TYPE_LOGICAL.OR:
-                result = leftValue.value or rightValue.value
-                CODE += leftValue.code
+            else:
+                listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
+                return None
+        elif self.type == TYPE_LOGICAL.OR:
+            #Se colocan las respectivas etiquetas
+            self.lExp.trueLabel = self.trueLabel
+            self.lExp.falseLabel = enviroment.generator.generateLabel()
+            self.rExp.trueLabel = self.trueLabel 
+            self.rExp.falseLabel = self.falseLabel 
+            #Se compilan las expresiones
+            leftValue = self.lExp.compile(enviroment)
+            rightValue = self.rExp.compile(enviroment)
+            if leftValue != None and rightValue != None:
+                CODE = leftValue.code
                 CODE += f'{leftValue.falseLabel}:\n'
                 CODE += rightValue.code
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = f'{leftValue.trueLabel}:\n{rightValue.trueLabel}'
-                value.falseLabel = rightValue.falseLabel
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
-            elif self.type == TYPE_LOGICAL.NOT:
-                result = not(leftValue.value)
-                CODE += leftValue.code
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = leftValue.falseLabel
-                value.falseLabel = leftValue.trueLabel
+            else:
+                listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
+                return None
+        else:#NOT
+            #Se colocan las respectivas etiquetas
+            self.lExp.trueLabel = self.falseLabel
+            self.lExp.falseLabel = self.trueLabel
+            #Se compila la expresión
+            leftValue = self.lExp.compile(enviroment)
+            if leftValue != None:
+                CODE = leftValue.code
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.falseLabel
+                value.falseLabel = self.trueLabel
                 return value
-        else:
-            listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
-            return None
+            else:
+                listError.append(Error("Error: No se ha podido realizar la logica de comparación","Local",self.row,self.column,"SEMANTICO"))
+                return None

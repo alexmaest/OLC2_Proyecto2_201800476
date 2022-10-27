@@ -18,6 +18,8 @@ class Relational():
         self.rExp = rExp
         self.row = row
         self.column = column
+        self.trueLabel = ''
+        self.falseLabel = ''
     
     def compile(self, enviroment):
         leftValue = self.lExp.compile(enviroment)
@@ -26,55 +28,47 @@ class Relational():
             CODE = ''
             CODE += leftValue.code
             CODE += rightValue.code
-            trueLabel = enviroment.generator.generateLabel()
-            falseLabel = enviroment.generator.generateLabel()
             if self.type == TYPE_RELATIONAL.IGUALI:
-                result = leftValue.value == rightValue.value
-                CODE += f'  if ({leftValue.temporal} == {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} == {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             elif self.type == TYPE_RELATIONAL.DIF:
-                result = leftValue.value != rightValue.value
-                CODE += f'  if ({leftValue.temporal} != {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} != {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             elif self.type == TYPE_RELATIONAL.MAYOR:
-                result = leftValue.value > rightValue.value
-                CODE += f'  if ({leftValue.temporal} > {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} > {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             elif self.type == TYPE_RELATIONAL.MENOR:
-                result = leftValue.value < rightValue.value
-                CODE += f'  if ({leftValue.temporal} < {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} < {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             elif self.type == TYPE_RELATIONAL.MAYORI:
-                result = leftValue.value >= rightValue.value
-                CODE += f'  if ({leftValue.temporal} >= {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} >= {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             elif self.type == TYPE_RELATIONAL.MENORI:
-                result = leftValue.value <= rightValue.value
-                CODE += f'  if ({leftValue.temporal} <= {rightValue.temporal}) goto {trueLabel};\n'
-                CODE += f'  goto {falseLabel};\n'
-                value = Retorno(TYPE_DECLARATION.VALOR,TYPE_DECLARATION.BOOLEAN,result,TYPE_DECLARATION.SIMPLE,None,CODE,None)
-                value.trueLabel = trueLabel
-                value.falseLabel = falseLabel
+                CODE += f'  if ({leftValue.temporal} <= {rightValue.temporal}) goto {self.trueLabel};\n'
+                CODE += f'  goto {self.falseLabel};\n'
+                value = Retorno(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,CODE,None,None)
+                value.trueLabel = self.trueLabel
+                value.falseLabel = self.falseLabel
                 return value
             else:
                 listError.append(Error("Error: No se ha podido realizar la comparación","Local",self.row,self.column,"SEMANTICO"))

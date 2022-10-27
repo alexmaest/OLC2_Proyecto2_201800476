@@ -25,25 +25,17 @@ class Assignment(Instruccion):
                         if exp.typeVar == None and exp.typeSingle == TYPE_DECLARATION.VECTOR:
                             if singleId.typeSingle == TYPE_DECLARATION.VECTOR:
                                 enviroment.editVariable(self.idList[0].id.id, exp.value)
-                            else: 
-                                listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
+                            else: listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
                         else:
                             if singleId.typeSingle == exp.typeSingle:
-
                                 if singleId.typeVar == exp.typeVar:
-                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None,None)
                                 elif singleId.typeVar == TYPE_DECLARATION.INTEGER and exp.typeVar == TYPE_DECLARATION.USIZE:
-                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None,None)
                                 elif singleId.typeVar == TYPE_DECLARATION.USIZE and exp.typeVar == TYPE_DECLARATION.INTEGER:
-                                        enviroment.editVariable(self.idList[0].id.id, exp.value)
-                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None)
-                                else: 
-                                    listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a una variable tipo "+str(singleId.typeVar),"Local",self.row,self.column,"SEMANTICO"))
-                            else: 
-                                listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
-
+                                        return Retorno(None,None,None,None,self.createAssignation(enviroment, exp, exist),None,None)
+                                else: listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a una variable tipo "+str(singleId.typeVar),"Local",self.row,self.column,"SEMANTICO"))
+                            else: listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
                     else:
                         #Se buscan atributos de structs
                         if exist.typeSingle == TYPE_DECLARATION.STRUCT:
@@ -55,10 +47,8 @@ class Assignment(Instruccion):
                                         newValue.append(founded.value[0])
                                         newValue.append(exp.value)
                                         founded.value = newValue
-                                    else: 
-                                        listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
-                                else: 
-                                    listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a un atributo tipo "+str(founded.typeVar),"Local",self.row,self.column,"SEMANTICO"))
+                                    else: listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
+                                else: listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a un atributo tipo "+str(founded.typeVar),"Local",self.row,self.column,"SEMANTICO"))
                         elif isinstance(self.idList[0],AssignmentAccessArray):
                             founded = self.foundAttribute(exist, self.idList, 1)
                             if founded != None:
@@ -68,34 +58,37 @@ class Assignment(Instruccion):
                                         newValue.append(founded.value[0])
                                         newValue.append(exp.value)
                                         founded.value = newValue
-                                    else: 
-                                        listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
-                                else: 
-                                    listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a un atributo tipo "+str(founded.typeVar),"Local",self.row,self.column,"SEMANTICO"))
-                        else:
-                            listError.append(Error("Error: La variable "+str(self.idList[0].id.id)+" no es un struct para que acceda a sus atributos","Local",self.row,self.column,"SEMANTICO"))
-                else:
-                    listError.append(Error("Error: La variable no es mutable","Local",self.row,self.column,"SEMANTICO"))
-            else:
-                listError.append(Error("Error: La variable aún no ha sido declarada","Local",self.row,self.column,"SEMANTICO"))
+                                    else: listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
+                                else: listError.append(Error("Error: No se puede asignar un valor "+str(exp.typeVar)+" a un atributo tipo "+str(founded.typeVar),"Local",self.row,self.column,"SEMANTICO"))
+                        else: listError.append(Error("Error: La variable "+str(self.idList[0].id.id)+" no es un struct para que acceda a sus atributos","Local",self.row,self.column,"SEMANTICO"))
+                else: listError.append(Error("Error: La variable no es mutable","Local",self.row,self.column,"SEMANTICO"))
+            else: listError.append(Error("Error: La variable aún no ha sido declarada","Local",self.row,self.column,"SEMANTICO"))
 
     def createAssignation(self, enviroment, exp, exist):
-        if exist.isReference:
+        if exist.typeSingle == TYPE_DECLARATION.ARRAY or exist.typeSingle == TYPE_DECLARATION.VECTOR:
             temporal = enviroment.generator.generateTemporal()
-            temporal2 = enviroment.generator.generateTemporal()
-            CODE = '/* ASIGNACION CON REFERENCIA */\n'
-            CODE += f'{exp.code}'
-            CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
-            CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
-            CODE += f'  Stack[(int) {temporal2}] = {exp.temporal};\n'
-            return CODE
-        else:
-            temporal = enviroment.generator.generateTemporal()
-            CODE = '/* ASIGNACION */\n'
+            CODE = '/* ASIGNACION DE LISTA */\n'
             CODE += f'{exp.code}'
             CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
             CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
             return CODE
+        else:
+            if exist.isReference:
+                temporal = enviroment.generator.generateTemporal()
+                temporal2 = enviroment.generator.generateTemporal()
+                CODE = '/* ASIGNACION CON REFERENCIA */\n'
+                CODE += f'{exp.code}'
+                CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+                CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
+                CODE += f'  Stack[(int) {temporal2}] = {exp.temporal};\n'
+                return CODE
+            else:
+                temporal = enviroment.generator.generateTemporal()
+                CODE = '/* ASIGNACION */\n'
+                CODE += f'{exp.code}'
+                CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+                CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
+                return CODE
 
     def foundAttribute(self, variable, list, number):
         if list[number].id in variable.value:

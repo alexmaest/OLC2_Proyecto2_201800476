@@ -7,5 +7,5 @@ class ForIterative():
         self.lExp = lExp
         self.rExp = rExp
 
-    def executeInstruction(self,enviroment):
+    def compile(self,enviroment):
         pass

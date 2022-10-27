@@ -7,6 +7,7 @@ from AST.Abstracts.Retorno import Retorno, TYPE_DECLARATION
 class Match(Instruccion):
     def __init__(self, expression, statement, row, column):
         self.expression = expression
+        self.isExpSentence = False
         self.statement = statement
         self.row = row
         self.column = column
@@ -16,6 +17,9 @@ class Match(Instruccion):
         if singleExp != None:
             #Validación si se encuentra el caso '_'
             founded = False
+            if self.isExpSentence: 
+                self.statement.isLoopOrFunction = False
+                self.statement.isExpSentence = True
             for arm in self.statement.instructions:
                 armExps = arm.getExpressions()
                 for singleArmExp in armExps:
@@ -37,10 +41,16 @@ class Match(Instruccion):
                         if isinstance(singleArmExp,AttAccess):
                             if singleArmExp.expList[0].id.id  == '_':
                                 default = True
+                                if self.isExpSentence: 
+                                    arm.isLoopOrFunction = False
+                                    arm.isExpSentence = True
                                 instructions = arm.compile(enviroment)
                                 CODE += f'{falseLabel}:\n'
                                 CODE += instructions.code
                             else:
+                                if self.isExpSentence: 
+                                    singleArmExp.isLoopOrFunction = False
+                                    singleArmExp.isExpSentence = True
                                 returned = singleArmExp.compile(enviroment)
                                 if returned != None:
                                     if singleExp.typeVar == returned.typeVar:
@@ -65,6 +75,9 @@ class Match(Instruccion):
                                     fail = True
                                     break
                         else:
+                            if self.isExpSentence: 
+                                singleArmExp.isLoopOrFunction = False
+                                singleArmExp.isExpSentence = True
                             returned = singleArmExp.compile(enviroment)
                             if returned != None:
                                 if singleExp.typeVar == returned.typeVar:
@@ -89,12 +102,15 @@ class Match(Instruccion):
                                 fail = True
                                 break
                     if not default:
-                        instructions =  arm.compile(enviroment)
+                        if self.isExpSentence: 
+                            arm.isLoopOrFunction = False
+                            arm.isExpSentence = True
+                        instructions = arm.compile(enviroment)
                         CODE += trueLabels
                         CODE += instructions.code
                         CODE += f'   goto {exitLabel};\n'
                 CODE += f'{exitLabel}:\n'
                 if fail: return None
-                else: return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)
+                else: return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,returned.label,CODE,returned.temporal,returned.att)
             else:listError.append(Error("Error: El brazo '_' debe de ser el último de la sentencia match","Local",self.row,self.column,"SEMANTICO"))
         else:listError.append(Error("Error: No se ha podido ejecutar la sentencia match porque su valor a comparar es nulo","Local",self.row,self.column,"SEMANTICO"))

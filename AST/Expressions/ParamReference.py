@@ -8,4 +8,5 @@ class ParamReference():
         self.reference = reference
     
     def compile(self, enviroment):
+        if self.reference:self.id.isReference = True
         return self.id.compile(enviroment)

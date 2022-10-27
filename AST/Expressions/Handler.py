@@ -10,6 +10,11 @@ class Handler():
         self.code = code
         self.temporal = temporal
         self.att = att
+        self.trueLabel = ''
+        self.falseLabel = ''
 
     def compile(self,enviroment):
-        return Retorno(self.typeIns,self.typeVar,self.typeSingle,self.label,self.code,self.temporal,self.att)
+        value = Retorno(self.typeIns,self.typeVar,self.typeSingle,self.label,self.code,self.temporal,self.att)
+        value.trueLabel = self.trueLabel
+        value.falseLabel = self.falseLabel
+        return value

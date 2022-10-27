@@ -8,5 +8,5 @@ class AccessTypeVector():
 
     def compile(self, enviroment):
         returned = self.accessType.compile(enviroment)
-        if returned != None:return Retorno(None,returned.typeVar,TYPE_DECLARATION.VECTOR,None,returned.code,None)
+        if returned != None:return Retorno(None,returned.typeVar,TYPE_DECLARATION.VECTOR,None,returned.code,None,None)
         else:return None

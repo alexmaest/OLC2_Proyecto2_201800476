@@ -11,28 +11,21 @@ class ListArraySimple(Instruccion):
         if isinstance(self.parameters,ListArraySimple):
             returned = self.createArrays(self,enviroment)
             if returned != None:
-                return Retorno(None,returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY,None,None,None)
+                return Retorno(None,returned.typeVar,TYPE_DECLARATION.ARRAY,None,None,None,None)
             else: return None
         else:
             typeVar = self.parameters.compile(enviroment)
-            exp = self.expression.compile(enviroment)
-            if typeVar != None and exp != None:
-                list = [0] * exp.value
-                return Retorno(None,typeVar.typeVar,list,TYPE_DECLARATION.ARRAY,None,None,None)
+            if typeVar != None:
+                return Retorno(None,typeVar.typeVar,TYPE_DECLARATION.ARRAY,None,None,None,None)
             else: return None
 
     def createArrays(self,listArray,enviroment):
-        exp = listArray.expression.compile(enviroment)
-        if exp != None:
-            if isinstance(listArray.parameters,ListArraySimple):
-                returned = self.createArrays(listArray.parameters,enviroment)
-                list = [returned.value] * exp.value
-                return Retorno(returned.typeVar,list,TYPE_DECLARATION.ARRAY)
-            else:
-                typeVar = listArray.parameters.compile(enviroment)
-                list = [0] * exp.value
-                return Retorno(typeVar.typeVar,list,TYPE_DECLARATION.ARRAY)
-        else: return None
+        if isinstance(listArray.parameters,ListArraySimple):
+            returned = self.createArrays(listArray.parameters,enviroment)
+            return Retorno(None,returned.typeVar,TYPE_DECLARATION.ARRAY,None,None,None,None)
+        else:
+            typeVar = listArray.parameters.compile(enviroment)
+            return Retorno(None,typeVar.typeVar,TYPE_DECLARATION.ARRAY,None,None,None,None)
 
 '''
 -[[[i64;2];3];2];

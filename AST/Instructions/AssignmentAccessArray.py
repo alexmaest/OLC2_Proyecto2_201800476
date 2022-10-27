@@ -31,7 +31,7 @@ class AssignmentAccessArray(Instruccion):
                             CODE += access.code
                             CODE += exp.code
                             CODE += f'{access.label} = {exp.temporal};\n'
-                            return Retorno(None,None,None,None,CODE,None)
+                            return Retorno(None,None,None,None,CODE,None,None)
                         else:pass #Ya se dijeron los errores así que no se hace nada
                     else:listError.append(Error("Error: La Variable a la que desea acceder no es mutable","Local",self.row,self.column,"SEMANTICO"))
                 else:
@@ -44,7 +44,7 @@ class AssignmentAccessArray(Instruccion):
                                 CODE += founded.code
                                 CODE += f'{temporal1} = Heap[(int) {founded.temporal}];\n'
                                 CODE += f'Heap[(int) {temporal1}] = {exp.temporal};\n'
-                                return Retorno(None,None,None,None,CODE,None)
+                                return Retorno(None,None,None,None,CODE,None,None)
                             else:listError.append(Error("Error: No se puede asignar un valor de diferentes dimensiones a las de la variable","Local",self.row,self.column,"SEMANTICO"))
                         else:listError.append(Error("Error: No se puede asignar un valor",exp.typeVar,"a un atributo tipo",founded.typeVar,"Local",self.row,self.column,"SEMANTICO"))
                     else:pass #Ya se dijeron los errores así que no se hace nada

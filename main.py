@@ -52,14 +52,36 @@ def start():
     pass
 
 text = '''
-    let mut z: i64 = 0;
-    let mut y: i64 = 0;
-
-    while(z != 10){
-        println!("El valor de z es: {}, y el de y es: {}",z,y);
-        z = z + 1;
-        y = y + 2;
+    /*struct Carro{
+        Anio: i64,
+        Precio: i64
     }
+
+    struct Automovil{
+        Marca: &str,
+        Precio: i64,
+        Agencia: &str
+    }*/
+
+    fn main(){
+        let mut single = 10;
+        for i in 1..5{
+            single = i;
+        }
+    }
+
+    /*fn singleOne(mut x:i64) -> i64{
+        if(false){
+           println!("Entra If");
+           return x;
+        }else if(false){
+           println!("Entra Else If");
+           return x + 1;
+        }else{
+           println!("Entra Else"); 
+           return x + 2;
+        }
+    }*/
 '''
 
 v = t.Tk()
@@ -142,3 +164,106 @@ startParser(text,consoleBox)
 
 for single in getErrorList():
     print(single.description)
+
+'''
+  printf("-----------------------------HEAP-----------------------------");
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[23]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[22]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[21]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[20]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[19]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[18]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[17]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[16]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[15]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[14]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[13]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[12]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[11]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[10]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[9]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[8]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[7]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[6]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[5]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[4]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[3]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[2]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[1]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Heap[0]);
+  printf("%c",(char) 10);
+  printf("-----------------------------STACK-----------------------------");
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[23]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[22]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[21]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[20]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[19]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[18]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[17]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[16]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[15]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[14]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[13]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[12]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[11]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[10]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[9]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[8]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[7]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[6]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[5]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[4]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[3]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[2]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[1]);
+  printf("%c",(char) 10);
+  printf("%d",(int) Stack[0]);
+  printf("%c",(char) 10);
+'''

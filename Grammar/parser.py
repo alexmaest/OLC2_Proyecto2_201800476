@@ -437,7 +437,7 @@ def p_explog(t):
     '''expop : exp AND exp
     | exp OR exp
     | AD exp'''
-    if t.slice[1].type == 'AD': t[0] = Logic(t[2], TYPE_LOGICAL.NOT, Handler(TYPE_DECLARATION.BOOLEAN,False,TYPE_DECLARATION.SIMPLE),t.lineno(1), t.lexpos(1))
+    if t.slice[1].type == 'AD': t[0] = Logic(t[2], TYPE_LOGICAL.NOT, Handler(None,TYPE_DECLARATION.BOOLEAN,TYPE_DECLARATION.SIMPLE,None,None,None,None),t.lineno(1), t.lexpos(1))
     else:
         if t.slice[2].type == 'AND': t[0] = Logic(t[1], TYPE_LOGICAL.AND, t[3],t.lineno(1), t.lexpos(1))
         else: t[0] = Logic(t[1], TYPE_LOGICAL.OR, t[3],t.lineno(1), t.lexpos(1))
@@ -493,7 +493,7 @@ def p_expvec(t):
     '''expvec : VEC AD newarray
     | VECTOR DPUNTOS DPUNTOS exp_natarr'''
     if t.slice[2].type == 'AD': t[0] = NewVector(t[3])
-    else: t[0] = NewVector(Native(Handler(None,None,None),t[4],t.lineno(1), t.lexpos(1)))
+    else: t[0] = NewVector(Native(Handler(None,None,None,None,None,None,None),t[4],t.lineno(1), t.lexpos(1)))
 
 def p_newarray(t):
     '''newarray : LCOR lista_exp RCOR

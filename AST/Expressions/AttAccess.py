@@ -15,14 +15,18 @@ from enum import Enum
 class AttAccess():
     def __init__(self, expList, row, column):
         self.expList = expList
+        self.dimensions = []
         self.row = row
         self.column = column
+        self.trueLabel = ''
+        self.falseLabel = ''
     
     def compile(self, enviroment):
         exist = None
         if isinstance(self.expList[0],AttAssign):
             if isinstance(self.expList[0].id.id,AccessArray):
                 exist = self.expList[0].id.id.compile(enviroment)
+                self.dimensions = self.expList[0].id.id.dimensions
             else:
                 exist = enviroment.getVariable(self.expList[0].id.id)
         else: 
@@ -31,6 +35,10 @@ class AttAccess():
             if isinstance(self.expList[0].id.id,AccessArray):
                 singleId = exist
             else:
+                if self.trueLabel != '' and self.falseLabel != '':
+                    self.expList[0].id.trueLabel = self.trueLabel
+                    self.expList[0].id.falseLabel = self.falseLabel
+                else:pass
                 singleId = self.expList[0].id.compile(enviroment)
             if len(self.expList) == 1:
                 #Se retornan Variables que sean normales, arrays, vectores y structs
@@ -47,7 +55,7 @@ class AttAccess():
                         CODE += returned.code
                         return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,returned.label,CODE,returned.temporal,returned.att)
                     return None
-        else:listError.append(Error("Error: La struct "+str(self.expList[0].id.id)+" no existe","Local",self.row,self.column,"SEMANTICO"))
+        else:listError.append(Error("Error: La variable "+str(self.expList[0].id.id)+" no existe","Local",self.row,self.column,"SEMANTICO"))
     
     def returnAttribute(self, variable, accesstypeVar, attList, number, temporal, enviroment):
         foundedStruct = searchInListStructsAux(accesstypeVar)

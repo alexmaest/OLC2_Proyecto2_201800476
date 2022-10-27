@@ -4,13 +4,14 @@ import re
 
 class Loop(Instruccion):
     def __init__(self, statement):
+        self.isExpSentence = False
         self.statement = statement
 
     def compile(self, enviroment):
-        loopLabel = enviroment.generator.generateLabel()
-        returned = self.statement.compile(enviroment)
         breakLabel = ''
         continueLabel = ''
+        loopLabel = enviroment.generator.generateLabel()
+        returned = self.statement.compile(enviroment)
         result = re.findall("BreakLabel",functionCode)
         if len(result) > 0:
             breakLabel = enviroment.generator.generateLabel()
@@ -21,10 +22,17 @@ class Loop(Instruccion):
             continueLabel = enviroment.generator.generateLabel()
             functionCode = functionCode.replace("ContinueLabel",continueLabel)
             continueLabel = continueLabel + ':\n'
+        if self.isExpSentence:
+            result = re.findall("ReturnLabel",functionCode)
+            if len(result) > 0:
+                returnLabel = enviroment.generator.generateLabel()
+                functionCode = functionCode.replace("ReturnLabel",returnLabel)
+                returnLabel = returnLabel + ':\n'
         CODE = '/* LOOP */\n'
         CODE += f'{loopLabel}:\n'
         CODE += continueLabel
         CODE += returned.code
         CODE += f'  goto {loopLabel};\n'
         CODE += breakLabel
-        return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,None,CODE,None)
+        CODE += returnLabel
+        return Retorno(returned.typeIns,returned.typeVar,returned.typeSingle,returned.label,CODE,returned.temporal,returned.att)
