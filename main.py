@@ -18,8 +18,8 @@ def searchFile():
         filename = filedialog.askopenfilename(
             initialdir="/", title="Select a File", filetypes=(("Rust files", "*.rs*"), ("All files", "*.*")))
         f = open(filename, "r")
-        #editorBox.delete('1.0', END)
-        #editorBox.insert(END,f.read())
+        editorBox.delete('1.0', END)
+        editorBox.insert(END,f.read())
         f.close()
         win.destroy()
         messagebox.showinfo("Información","Carga de archivo realizada correctamente")
@@ -46,43 +46,9 @@ def dbReport():
     ReportDB(globalEnv.modules)
 
 def start():
-    #editorTempText = editorBox.get("1.0", "end-1c")
-    #consoleBox.delete('1.0', END)
-    #startParser(editorTempText,consoleBox)
-    pass
-
-text = '''
-    /*struct Carro{
-        Anio: i64,
-        Precio: i64
-    }
-
-    struct Automovil{
-        Marca: &str,
-        Precio: i64,
-        Agencia: &str
-    }*/
-
-    fn main(){
-        let mut single = 10;
-        for i in 1..5{
-            single = i;
-        }
-    }
-
-    /*fn singleOne(mut x:i64) -> i64{
-        if(false){
-           println!("Entra If");
-           return x;
-        }else if(false){
-           println!("Entra Else If");
-           return x + 1;
-        }else{
-           println!("Entra Else"); 
-           return x + 2;
-        }
-    }*/
-'''
+    editorTempText = editorBox.get("1.0", "end-1c")
+    consoleBox.delete('1.0', END)
+    startParser(editorTempText,consoleBox)
 
 v = t.Tk()
 v.geometry("1170x720")
@@ -92,7 +58,6 @@ v.title("DB-RUST Interpeter")
 tabControl = ttk.Notebook(v)
 
 tab1 = ttk.Frame(tabControl)
-'''
 tab2 = ttk.Frame(tabControl)
 tab3 = ttk.Frame(tabControl)
 tab4 = ttk.Frame(tabControl)
@@ -104,16 +69,15 @@ tabControl.pack(expand = 1, fill ="both")
 
 #TAB 1
 editorBox = Text(tab1, fg="#96e0ff", bg ="#171717", height=24, width=166, font = "Arial 10")
-editorBox.place(x=0, y=65)'''
+editorBox.place(x=0, y=65)
 consoleBox = Text(tab1, fg="#969696", bg ="black", height=13, width=146)
 consoleBox.place(x=0, y=470)
-'''
 t.Label(tab1, text="", width=200, height=4, bg = "#333333").place(x=0, y=0)
 t.Label(tab1, text="DB RUST", fg="#fcba03", width=7, height=1, bg = "#333333", font = "Helvetica 18 bold italic").place(x=30, y=15)
 t.Button(tab1, text="▶", width=2, font = "Helvetica 12 bold",fg="#ffffff", bg='#1d8a5c', command=start).place(x=980, y=15)
 t.Button(tab1, text="Cargar archivo", width=12, font = "Arial 12",fg="#ffffff", bg='#333333', command=searchFile).place(x=1010, y=15)
 t.Label(tab1, text="Terminal", width=130, fg="#969696", bg = "black", font = "Helvetica 12").place(x=0, y=450)
-t.Label(tab1, text = "                                   2022 - Proyecto 1 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
+t.Label(tab1, text = "                                   2022 - Proyecto 2 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
 
 #TAB 2
 t.Label(tab2, text="", width=200, height=400, bg = "#171717").place(x=0, y=60)
@@ -128,7 +92,7 @@ t.Button(tab2, text="Generar", width=12, font = "Arial 12",fg="#ffffff", bg='#33
 t.Label(tab2, text="Reporte de errores", width=20, fg="#969696", bg = "black", font = "Helvetica 12").place(x=900, y=270)
 t.Button(tab2, text="Generar", width=12, font = "Arial 12",fg="#ffffff", bg='#333333', command=errorReport).place(x=935, y=320)
 t.Label(tab2, text="REPORTES", fg="#fcba03", width=10, height=1, bg = "#333333", font = "Helvetica 18 bold italic").place(x=20, y=15)
-t.Label(tab2, text = "                                   2022 - Proyecto 1 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
+t.Label(tab2, text = "                                   2022 - Proyecto 2 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
 
 info = """Rust es un lenguaje de programación que está tomando fuerza en los últimos años,
 este cuenta con muchas características que lo hacen un lenguaje muy completo y de gran uso
@@ -155,12 +119,11 @@ t.Label(tab3, text="Acerca de la aplicación", width=20, fg="#fcba03", bg = "bla
 t.Label(tab3, text=info, width=75, fg="#FFFFFF", bg = "black", font = "Helvetica 12", anchor="e", justify=LEFT).place(x=30, y=200)
 t.Label(tab3, text="Datos del estudiante", width=19, fg="#fcba03", bg = "black", font = "Helvetica 12 italic").place(x=36, y=430)
 t.Label(tab3, text=datos, width=23, fg="#FFFFFF", bg = "black", font = "Helvetica 12", anchor="e", justify=LEFT).place(x=46, y=460)
-t.Label(tab3, text = "                                   2022 - Proyecto 1 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
+t.Label(tab3, text = "                                   2022 - Proyecto 2 de Organización de Lenguajes y Compiladores 2", width=260, fg="#ffffff", bg = "#1486ff").place(x=0, y=675)
 
-#v.mainloop()
-'''
+v.mainloop()
 
-startParser(text,consoleBox)
+#startParser(text,consoleBox)
 
 for single in getErrorList():
     print(single.description)

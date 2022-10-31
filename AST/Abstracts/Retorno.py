@@ -29,6 +29,7 @@ class Retorno():
         self.code = code
         self.temporal = temporal
         self.att = att
+        self.dimensions = None
         self.trueLabel = ''
         self.falseLabel = ''
     

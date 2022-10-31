@@ -10,8 +10,10 @@ class Loop(Instruccion):
     def compile(self, enviroment):
         breakLabel = ''
         continueLabel = ''
+        returnLabel = ''
         loopLabel = enviroment.generator.generateLabel()
         returned = self.statement.compile(enviroment)
+        functionCode = returned.code
         result = re.findall("BreakLabel",functionCode)
         if len(result) > 0:
             breakLabel = enviroment.generator.generateLabel()
@@ -31,7 +33,7 @@ class Loop(Instruccion):
         CODE = '/* LOOP */\n'
         CODE += f'{loopLabel}:\n'
         CODE += continueLabel
-        CODE += returned.code
+        CODE += functionCode
         CODE += f'  goto {loopLabel};\n'
         CODE += breakLabel
         CODE += returnLabel

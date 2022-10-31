@@ -54,20 +54,28 @@ class CallFunction():
                                     if self.parameters[count].reference == param.reference:
                                         if param.reference:
                                             singleValue = self.parameters[count].compile(enviroment)
-                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
+                                            singleHandler = Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att)
+                                            singleHandler.dimensions = exist.dimensions
+                                            singleParam = DeclarationSingle(param,singleHandler,self.row,self.column)   
                                             singleParam.newEnv = newEnv
                                             singleParam.isParam = True
                                             singleParam.oldSize = enviroment.size
                                             singleParam.isReference = True
-                                            PARAM_CODE += singleParam.compile(newEnv).code          
+                                            returned = singleParam.compile(newEnv)
+                                            if returned != None: PARAM_CODE += returned.code
+                                            else: return None
                                             count+=1
                                         else:
                                             singleValue = self.parameters[count].compile(enviroment)
-                                            singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
+                                            singleHandler = Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att)
+                                            singleHandler.dimensions = exist.dimensions
+                                            singleParam = DeclarationSingle(param,singleHandler,self.row,self.column)   
                                             singleParam.newEnv = newEnv
                                             singleParam.isParam = True
                                             singleParam.oldSize = enviroment.size
-                                            PARAM_CODE += singleParam.compile(newEnv).code          
+                                            returned = singleParam.compile(newEnv)
+                                            if returned != None: PARAM_CODE += returned.code
+                                            else: return None
                                             count+=1
                                     else:
                                         listError.append(Error("Error: Se esperaba una referencia diferente de la variable que ingresó como parametro","Local",self.row,self.column,"SEMANTICO"))
@@ -76,11 +84,15 @@ class CallFunction():
                                 else:
                                     if not param.reference:
                                         singleValue = self.parameters[count].compile(enviroment)
-                                        singleParam = DeclarationSingle(param,Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att),self.row,self.column)   
+                                        singleHandler = Handler(singleValue.typeIns,singleValue.typeVar,singleValue.typeSingle,singleValue.label,singleValue.code,singleValue.temporal,singleValue.att)
+                                        singleHandler.dimensions = exist.dimensions
+                                        singleParam = DeclarationSingle(param,singleHandler,self.row,self.column)   
                                         singleParam.newEnv = newEnv
                                         singleParam.isParam = True
                                         singleParam.oldSize = enviroment.size
-                                        PARAM_CODE += singleParam.compile(newEnv).code          
+                                        returned = singleParam.compile(newEnv)
+                                        if returned != None: PARAM_CODE += returned.code
+                                        else: return None
                                         count+=1
                                     else:
                                         listError.append(Error("Error: Se esperaba una referencia diferente de la variable que ingresó como parametro","Local",self.row,self.column,"SEMANTICO"))
@@ -99,7 +111,9 @@ class CallFunction():
                         singleParam.newEnv = newEnv
                         singleParam.isParam = True
                         singleParam.oldSize = enviroment.size
-                        PARAM_CODE += singleParam.compile(newEnv).code     
+                        returned = singleParam.compile(newEnv)
+                        if returned != None: PARAM_CODE += returned.code
+                        else: return None
                         count+=1
                 
                 if not Fail:

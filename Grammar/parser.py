@@ -600,6 +600,7 @@ def p_error(t):
 import Grammar.ply.yacc as yacc
 parser = yacc.yacc()
 globalEnv = None
+import tkinter
 
 def startParser(text,console):
     content = parser.parse(text)
@@ -615,8 +616,9 @@ def startParser(text,console):
             returnedMain = CallFunction('main',[],0,0)
             returnedMain.isMain = True
             returnedMain.compile(globalEnv)
-            print(globalGen.generateHeader())
-            print(globalGen.code)
+            CODE = globalGen.generateHeader()
+            CODE += globalGen.code
+            console.insert(tkinter.END,CODE+"\n")
         else:
             print("Error: No fué encontrada una función main")
             #except:

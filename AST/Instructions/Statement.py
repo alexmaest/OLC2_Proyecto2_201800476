@@ -7,6 +7,7 @@ from AST.Instructions.Match import Match
 from AST.Instructions.While import While
 from AST.Instructions.Loop import Loop
 from AST.Instructions.Match import Match
+from AST.Instructions.Assignment import Assignment
 from AST.Instructions.If import If
 from AST.Error.Error import Error
 from AST.Error.ErrorList import listError

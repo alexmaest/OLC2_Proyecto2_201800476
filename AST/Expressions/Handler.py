@@ -10,6 +10,8 @@ class Handler():
         self.code = code
         self.temporal = temporal
         self.att = att
+        self.id = id
+        self.dimensions = None
         self.trueLabel = ''
         self.falseLabel = ''
 
@@ -17,4 +19,5 @@ class Handler():
         value = Retorno(self.typeIns,self.typeVar,self.typeSingle,self.label,self.code,self.temporal,self.att)
         value.trueLabel = self.trueLabel
         value.falseLabel = self.falseLabel
+        value.dimensions = self.dimensions
         return value

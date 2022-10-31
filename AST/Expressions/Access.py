@@ -17,12 +17,15 @@ class Access():
         value = enviroment.getVariable(self.id)
         if value != None:
             temporal = enviroment.generator.generateTemporal()
+            temporal2 = enviroment.generator.generateTemporal()
             if self.isReference:
                 CODE = f'/* ACCEDIENDO A VARIABLE {self.id} POR REFERENCIA */\n'
                 CODE += f'  {temporal} = SP + {value.relativePosition};\n'
-                return Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal,value.att)
+                CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
+                singleReturn = Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal2,value.att)
+                singleReturn.dimensions = value.dimensions
+                return singleReturn
             else:
-                temporal2 = enviroment.generator.generateTemporal()
                 CODE = f'/* ACCEDIENDO A VARIABLE {self.id} */\n'
                 CODE += f'  {temporal} = SP + {value.relativePosition};\n'
                 CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
@@ -30,16 +33,20 @@ class Access():
                     temporal3 = enviroment.generator.generateTemporal()
                     CODE += f'  {temporal3} = Stack[(int) {temporal2}];\n'
                     CODE += self.generateBooleanIf(value,temporal3)
-                    value = Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal3,value.att)
-                    value.trueLabel = self.trueLabel
-                    value.falseLabel = self.falseLabel
-                    return value
+                    singleReturn = Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal3,value.att)
+                    singleReturn.dimensions = value.dimensions
+                    singleReturn.trueLabel = self.trueLabel
+                    singleReturn.falseLabel = self.falseLabel
+                    return singleReturn
                 else:
                     CODE += self.generateBooleanIf(value,temporal2)
-                    value = Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal2,value.att)
                     value.trueLabel = self.trueLabel
                     value.falseLabel = self.falseLabel
-                    return value
+                    singleReturn = Retorno(None,value.typeVar,value.typeSingle,None,CODE,temporal2,value.att)
+                    singleReturn.dimensions = value.dimensions
+                    singleReturn.trueLabel = self.trueLabel
+                    singleReturn.falseLabel = self.falseLabel
+                    return singleReturn
         else:listError.append(Error("Error: La variable "+str(self.id)+" no existe","Local",self.row,self.column,"SEMANTICO"))
 
     def generateBooleanIf(self,value,temporal):

@@ -66,12 +66,22 @@ class Assignment(Instruccion):
 
     def createAssignation(self, enviroment, exp, exist):
         if exist.typeSingle == TYPE_DECLARATION.ARRAY or exist.typeSingle == TYPE_DECLARATION.VECTOR:
-            temporal = enviroment.generator.generateTemporal()
-            CODE = '/* ASIGNACION DE LISTA */\n'
-            CODE += f'{exp.code}'
-            CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
-            CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
-            return CODE
+            if exist.isReference:
+                temporal = enviroment.generator.generateTemporal()
+                temporal2 = enviroment.generator.generateTemporal()
+                CODE = '/* ASIGNACION CON LISTA */\n'
+                CODE += f'{exp.code}'
+                CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+                CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
+                CODE += f'  Stack[(int) {temporal2}] = {exp.temporal};\n'
+                return CODE
+            else:
+                temporal = enviroment.generator.generateTemporal()
+                CODE = '/* ASIGNACION DE LISTA */\n'
+                CODE += f'{exp.code}'
+                CODE += f'  {temporal} = SP + {exist.relativePosition};\n'
+                CODE += f'  Stack[(int) {temporal}] = {exp.temporal};\n'
+                return CODE
         else:
             if exist.isReference:
                 temporal = enviroment.generator.generateTemporal()

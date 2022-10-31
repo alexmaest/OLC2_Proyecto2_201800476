@@ -36,6 +36,7 @@ class DeclarationSingle(Instruccion):
             self.expression.isExpSentence = True
             self.isExpSentence = True
         exp = self.expression.compile(enviroment)
+        if exp.dimensions != None: dimensions = exp.dimensions
         if self.newEnv != None:
             enviroment = self.newEnv
         if self.oldSize == None:
@@ -69,7 +70,7 @@ class DeclarationSingle(Instruccion):
                             if isinstance(self.expression.expList[0].id.id,AccessArray):dimensions = self.expression.expList[0].id.id.dimensions
                         if isinstance(self.asignation.type, ListArraySimple):
                             size = enviroment.size
-                            if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,True,exp.att,dimensions,self.row,self.column)):
+                            if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,self.isReference,exp.att,dimensions,self.row,self.column)):
                                 return Retorno(None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None,None)
                             else:pass
                         else:
@@ -77,7 +78,7 @@ class DeclarationSingle(Instruccion):
                             if isinstance(self.expression,AttAccess): 
                                 if isinstance(self.expression.expList[0].id.id,AccessArray):dimensions = self.expression.expList[0].id.id.dimensions
                             size = enviroment.size
-                            if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,True,exp.att,dimensions,self.row,self.column)):
+                            if enviroment.saveVariable(Symbol(content.typeVar[3],content.typeVar[1],content.typeSingle,content.typeVar[0],enviroment.size,self.isReference,exp.att,dimensions,self.row,self.column)):
                                 return Retorno(None,None,None,None,self.createDeclaration(enviroment,exp,self.oldSize,self.isParam,size),None,None)
                             else:pass
                     elif exp.typeSingle == content.typeSingle:

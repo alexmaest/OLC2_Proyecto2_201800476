@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from AST.Abstracts.Expression import Expression
+from AST.Expressions.Access import Access
 from AST.Expressions.AccessInstruction import AccessInstruction
 from AST.Abstracts.Retorno import TYPE_DECLARATION, Retorno
 from AST.Expressions.AccessArray import AccessArray
@@ -49,7 +50,8 @@ class AttAccess():
                     return self.returnAttribute(exist,exist.typeVar,self.expList,1,exist.temporal,enviroment)
                 else:
                     temporal = enviroment.generator.generateTemporal()
-                    returned = self.returnAttribute(exist,exist.typeVar,self.expList,1,exist.temporal,enviroment)
+                    exist = self.expList[0].id.compile(enviroment)
+                    returned = self.returnAttribute(exist,exist.typeVar,self.expList,1,exist.temporal,enviroment,self.expList[0].id.id)
                     if returned != None:                    
                         CODE = f'  {temporal} = Heap[(int) {exist.temporal}];\n'
                         CODE += returned.code
@@ -57,10 +59,12 @@ class AttAccess():
                     return None
         else:listError.append(Error("Error: La variable "+str(self.expList[0].id.id)+" no existe","Local",self.row,self.column,"SEMANTICO"))
     
-    def returnAttribute(self, variable, accesstypeVar, attList, number, temporal, enviroment):
+    def returnAttribute(self, variable, accesstypeVar, attList, number, temporal, enviroment,id):
         foundedStruct = searchInListStructsAux(accesstypeVar)
+        singleHandler = Handler(variable.typeIns,variable.typeVar,variable.typeSingle,variable.label,variable.code,variable.temporal,variable.att)
+        singleHandler.id = id
         if isinstance(attList[number].id,CallNative):
-            callNativeFunction = Native(Handler(variable.typeIns,variable.typeVar,variable.typeSingle,variable.label,variable.code,variable.temporal,variable.att),list[number].id,self.row,self.column)
+            callNativeFunction = Native(singleHandler,attList[number].id,self.row,self.column)
             return callNativeFunction.compile(enviroment)
         else:
             cont = 0

@@ -50,7 +50,7 @@ class Arithmetic():
         [TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL],
         [TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL],
         [TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL],
-        [TYPE_DECLARATION.USIZE, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL],
+        [TYPE_DECLARATION.USIZE, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.USIZE, TYPE_DECLARATION.NULL],
         [TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL],
         [TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL, TYPE_DECLARATION.NULL]
     ]
@@ -68,7 +68,7 @@ class Arithmetic():
         if lReturn != None and rReturn != None or singleReturn != None:
             if self.type == TYPE_OPERATION.SUMA:
                 typeResult = Arithmetic.SUMA[lReturn.typeVar.value[0]][rReturn.typeVar.value[0]]
-                if typeResult == TYPE_DECLARATION.INTEGER or typeResult == TYPE_DECLARATION.USIZE or typeResult == TYPE_DECLARATION.FLOAT or typeResult == TYPE_DECLARATION.STRING:
+                if typeResult == TYPE_DECLARATION.INTEGER or typeResult == TYPE_DECLARATION.USIZE or typeResult == TYPE_DECLARATION.FLOAT or typeResult == TYPE_DECLARATION.STRING  or typeResult == TYPE_DECLARATION.aSTRING:
                     return self.operateSum(enviroment, typeResult)
                 else:
                     listError.append(Error("Error: No se puede operar "+str(lReturn.typeVar)+" con "+str(rReturn.typeVar),"Local",self.row,self.column,"SEMANTICO"))
@@ -176,9 +176,9 @@ class Arithmetic():
             temporal = enviroment.generator.generateTemporal()
             lReturn = self.lExp.compile(enviroment)
             rReturn = self.rExp.compile(enviroment)
-            CODE += lReturn.code + '\n'
-            CODE += rReturn.code + '\n'
-            CODE += f'{temporal} = {lReturn.temporal} - {rReturn.temporal};\n'
+            CODE += lReturn.code
+            CODE += rReturn.code
+            CODE += f'  {temporal} = {lReturn.temporal} - {rReturn.temporal};\n'
             return Retorno(None,typeResult,TYPE_DECLARATION.SIMPLE,None,CODE,temporal,None)
 
     def operateMul(self, enviroment, typeResult):
@@ -186,9 +186,9 @@ class Arithmetic():
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
         CODE = '/* MULTIPLICACIÓN */\n'
-        CODE += lReturn.code + '\n'
-        CODE += rReturn.code + '\n'
-        CODE += f'{temporal} = {lReturn.temporal} * {rReturn.temporal};\n'
+        CODE += lReturn.code
+        CODE += rReturn.code
+        CODE += f'  {temporal} = {lReturn.temporal} * {rReturn.temporal};\n'
         return Retorno(None,typeResult,TYPE_DECLARATION.SIMPLE,None,CODE,temporal,None)
 
     def operateDiv(self, enviroment, typeResult):
@@ -218,6 +218,7 @@ class Arithmetic():
             CODE += f'  printf("%c",(char) 114); //r\n'
             CODE += f'  printf("%c",(char) 111); //o\n'
             CODE += f'  printf("%c",(char) 114); //r\n'
+            CODE += f'  printf("%c",(char) 10);\n'
             CODE += f'{exitLabel}:\n'
             return Retorno(None,typeResult,TYPE_DECLARATION.SIMPLE,None,CODE,temporal,None)
         else:
@@ -247,7 +248,7 @@ class Arithmetic():
         temporal = enviroment.generator.generateTemporal()
         lReturn = self.lExp.compile(enviroment)
         rReturn = self.rExp.compile(enviroment)
-        CODE += lReturn.code + '\n'
-        CODE += rReturn.code + '\n'
-        CODE += f'{temporal} = {lReturn.temporal} % {rReturn.temporal};\n'
+        CODE += lReturn.code
+        CODE += rReturn.code
+        CODE += f'  {temporal} = (int){lReturn.temporal} % (int){rReturn.temporal};\n'
         return Retorno(None,typeResult,TYPE_DECLARATION.SIMPLE,None,CODE,temporal,None)

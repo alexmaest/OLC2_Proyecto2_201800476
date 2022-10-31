@@ -1,10 +1,10 @@
 from AST.Abstracts.Instruccion import Instruccion
 from AST.Abstracts.Retorno import Retorno, TYPE_DECLARATION
+from AST.Expressions.Handler import Handler
 from AST.Symbol.Enviroment import Enviroment
 from AST.Expressions.CallNative import CallNative, TYPE_NATIVE
 from AST.Error.Error import Error
 from AST.Error.ErrorList import listError
-import math
 
 class Native(Instruccion):
     def __init__(self, value, function, row, column):
@@ -42,30 +42,30 @@ class Native(Instruccion):
             elif function.typeVar == TYPE_NATIVE.LEN:
                 if returnedValue.typeSingle == TYPE_DECLARATION.ARRAY or returnedValue.typeSingle == TYPE_DECLARATION.VECTOR:
                     returned = enviroment.getVariable(self.value.id)
-                    temporal = enviroment.generateTemporal()
-                    temporal2 = enviroment.generateTemporal()
-                    temporal3 = enviroment.generateTemporal()
+                    temporal = enviroment.generator.generateTemporal()
+                    temporal2 = enviroment.generator.generateTemporal()
+                    temporal3 = enviroment.generator.generateTemporal()
                     CODE = '/* NATIVA LEN() */\n'
                     CODE += f'{temporal} = {returned.relativePosition};\n'
                     CODE += f'{temporal2} = Stack[(int) {temporal}];\n'
                     CODE += f'{temporal3} = Heap[(int) {temporal2}];\n'
-                    return Retorno(None,TYPE_DECLARATION.INTEGER,None,TYPE_DECLARATION.SIMPLE,None,CODE,temporal3)
+                    return Retorno(None,TYPE_DECLARATION.INTEGER,TYPE_DECLARATION.SIMPLE,None,CODE,temporal3,None)
                 else: 
                     listError.append(Error("Error: La función len() solo funciona con vectores o arreglos","Local",self.row,self.column,"SEMANTICO"))
                     return None
             elif function.typeVar == TYPE_NATIVE.CAPACITY:
                 if returnedValue.typeSingle == TYPE_DECLARATION.VECTOR:
                     returned = enviroment.getVariable(self.value.id)
-                    temporal = enviroment.generateTemporal()
-                    temporal2 = enviroment.generateTemporal()
-                    temporal3 = enviroment.generateTemporal()
-                    temporal4 = enviroment.generateTemporal()
+                    temporal = enviroment.generator.generateTemporal()
+                    temporal2 = enviroment.generator.generateTemporal()
+                    temporal3 = enviroment.generator.generateTemporal()
+                    temporal4 = enviroment.generator.generateTemporal()
                     CODE = '/* NATIVA CAPACITY() */\n'
                     CODE += f'{temporal} = {returned.relativePosition};\n'
                     CODE += f'{temporal2} = Stack[(int) {temporal}];\n'
                     CODE += f'{temporal3} = {temporal2} + 1;\n'
                     CODE += f'{temporal4} = Heap[(int) {temporal3}];\n'
-                    return Retorno(None,TYPE_DECLARATION.INTEGER,None,TYPE_DECLARATION.SIMPLE,None,CODE,temporal4)
+                    return Retorno(None,TYPE_DECLARATION.INTEGER,TYPE_DECLARATION.SIMPLE,None,CODE,temporal4,None)
                 else: 
                     listError.append(Error("Error: La función capacity() solo funciona con vectores","Local",self.row,self.column,"SEMANTICO"))
                     return None
@@ -74,24 +74,24 @@ class Native(Instruccion):
                     indexValue = function.value.compile(enviroment)
                     if indexValue != None:
                         returned = enviroment.getVariable(self.value.id)
-                        cont = enviroment.generateTemporal()
-                        newPointer = enviroment.generateTemporal()
-                        temporal = enviroment.generateTemporal()
-                        temporal2 = enviroment.generateTemporal()
-                        temporal3 = enviroment.generateTemporal()
-                        temporal4 = enviroment.generateTemporal()
-                        temporal5 = enviroment.generateTemporal()
-                        temporal6 = enviroment.generateTemporal()
-                        temporal7 = enviroment.generateTemporal()
-                        temporal8 = enviroment.generateTemporal()
-                        temporal9 = enviroment.generateTemporal()
-                        temporal10 = enviroment.generateTemporal()
-                        label = enviroment.generateLabel()
-                        label2 = enviroment.generateLabel()
-                        label3 = enviroment.generateLabel()
-                        label4 = enviroment.generateLabel()
-                        label5 = enviroment.generateLabel()
-                        label6 = enviroment.generateLabel()
+                        cont = enviroment.generator.generateTemporal()
+                        newPointer = enviroment.generator.generateTemporal()
+                        temporal = enviroment.generator.generateTemporal()
+                        temporal2 = enviroment.generator.generateTemporal()
+                        temporal3 = enviroment.generator.generateTemporal()
+                        temporal4 = enviroment.generator.generateTemporal()
+                        temporal5 = enviroment.generator.generateTemporal()
+                        temporal6 = enviroment.generator.generateTemporal()
+                        temporal7 = enviroment.generator.generateTemporal()
+                        temporal8 = enviroment.generator.generateTemporal()
+                        temporal9 = enviroment.generator.generateTemporal()
+                        temporal10 = enviroment.generator.generateTemporal()
+                        label = enviroment.generator.generateLabel()
+                        label2 = enviroment.generator.generateLabel()
+                        label3 = enviroment.generator.generateLabel()
+                        label4 = enviroment.generator.generateLabel()
+                        label5 = enviroment.generator.generateLabel()
+                        label6 = enviroment.generator.generateLabel()
                         CODE = '/* NATIVA REMOVE() */\n'
                         CODE += indexValue.code
                         CODE += f'  {temporal} = {returned.relativePosition};\n'
@@ -140,19 +140,19 @@ class Native(Instruccion):
             elif function.typeVar == TYPE_NATIVE.CONTAINS:
                 if returnedValue.typeSingle == TYPE_DECLARATION.ARRAY or returnedValue.typeSingle == TYPE_DECLARATION.VECTOR:
                     returned = enviroment.getVariable(self.value.id)
-                    cont = enviroment.generateTemporal()
-                    newPointer = enviroment.generateTemporal()
-                    temporal = enviroment.generateTemporal()
-                    temporal2 = enviroment.generateTemporal()
-                    temporal3 = enviroment.generateTemporal()
-                    temporal4 = enviroment.generateTemporal()
-                    temporal5 = enviroment.generateTemporal()
-                    temporal6 = enviroment.generateTemporal()
-                    label = enviroment.generateLabel()
-                    label2 = enviroment.generateLabel()
-                    label3 = enviroment.generateLabel()
-                    label4 = enviroment.generateLabel()
-                    label5 = enviroment.generateLabel()
+                    cont = enviroment.generator.generateTemporal()
+                    newPointer = enviroment.generator.generateTemporal()
+                    temporal = enviroment.generator.generateTemporal()
+                    temporal2 = enviroment.generator.generateTemporal()
+                    temporal3 = enviroment.generator.generateTemporal()
+                    temporal4 = enviroment.generator.generateTemporal()
+                    temporal5 = enviroment.generator.generateTemporal()
+                    temporal6 = enviroment.generator.generateTemporal()
+                    label = enviroment.generator.generateLabel()
+                    label2 = enviroment.generator.generateLabel()
+                    label3 = enviroment.generator.generateLabel()
+                    label4 = enviroment.generator.generateLabel()
+                    label5 = enviroment.generator.generateLabel()
                     CODE = '/* NATIVA CONTAINS() */\n'
                     CODE += returnedValue.code
                     CODE += f'  {temporal} = {returned.relativePosition};\n'
@@ -187,22 +187,22 @@ class Native(Instruccion):
                     if indexValue != None:
                         if indexValue.typeVar == returnedValue.typeVar:
                             returned = enviroment.getVariable(self.value.id)
-                            cont = enviroment.generateTemporal()
-                            newPointer = enviroment.generateTemporal()
-                            temporal = enviroment.generateTemporal()
-                            temporal2 = enviroment.generateTemporal()
-                            temporal3 = enviroment.generateTemporal()
-                            temporal4 = enviroment.generateTemporal()
-                            temporal5 = enviroment.generateTemporal()
-                            temporal6 = enviroment.generateTemporal()
-                            temporal7 = enviroment.generateTemporal()
-                            temporalData = enviroment.generateTemporal()
-                            label = enviroment.generateLabel()
-                            label2 = enviroment.generateLabel()
-                            label3 = enviroment.generateLabel()
-                            label4 = enviroment.generateLabel()
-                            label5 = enviroment.generateLabel()
-                            copyVector = enviroment.generateLabel()
+                            cont = enviroment.generator.generateTemporal()
+                            newPointer = enviroment.generator.generateTemporal()
+                            temporal = enviroment.generator.generateTemporal()
+                            temporal2 = enviroment.generator.generateTemporal()
+                            temporal3 = enviroment.generator.generateTemporal()
+                            temporal4 = enviroment.generator.generateTemporal()
+                            temporal5 = enviroment.generator.generateTemporal()
+                            temporal6 = enviroment.generator.generateTemporal()
+                            temporal7 = enviroment.generator.generateTemporal()
+                            temporalData = enviroment.generator.generateTemporal()
+                            label = enviroment.generator.generateLabel()
+                            label2 = enviroment.generator.generateLabel()
+                            label3 = enviroment.generator.generateLabel()
+                            label4 = enviroment.generator.generateLabel()
+                            label5 = enviroment.generator.generateLabel()
+                            copyVector = enviroment.generator.generateLabel()
                             CODE = '/* NATIVA PUSH() */\n'
                             CODE += returnedValue.code
                             CODE += f'  {temporal} = {returned.relativePosition};\n'
@@ -256,25 +256,25 @@ class Native(Instruccion):
                         if indexValue != None and valueValue != None:
                             if indexValue.typeVar == TYPE_DECLARATION.INTEGER or indexValue.typeVar == TYPE_DECLARATION.USIZE:
                                 returned = enviroment.getVariable(self.value.id)
-                                cont = enviroment.generateTemporal()
-                                newPointer = enviroment.generateTemporal()
-                                temporal = enviroment.generateTemporal()
-                                temporal2 = enviroment.generateTemporal()
-                                temporal3 = enviroment.generateTemporal()
-                                temporal4 = enviroment.generateTemporal()
-                                temporal5 = enviroment.generateTemporal()
-                                temporal6 = enviroment.generateTemporal()
-                                temporal7 = enviroment.generateTemporal()
-                                temporal8 = enviroment.generateTemporal()
-                                temporalData = enviroment.generateTemporal()
-                                label = enviroment.generateLabel()
-                                label2 = enviroment.generateLabel()
-                                label3 = enviroment.generateLabel()
-                                label4 = enviroment.generateLabel()
-                                label5 = enviroment.generateLabel()
-                                label6 = enviroment.generateLabel()
-                                label7 = enviroment.generateLabel()
-                                copyVector = enviroment.generateLabel()
+                                cont = enviroment.generator.generateTemporal()
+                                newPointer = enviroment.generator.generateTemporal()
+                                temporal = enviroment.generator.generateTemporal()
+                                temporal2 = enviroment.generator.generateTemporal()
+                                temporal3 = enviroment.generator.generateTemporal()
+                                temporal4 = enviroment.generator.generateTemporal()
+                                temporal5 = enviroment.generator.generateTemporal()
+                                temporal6 = enviroment.generator.generateTemporal()
+                                temporal7 = enviroment.generator.generateTemporal()
+                                temporal8 = enviroment.generator.generateTemporal()
+                                temporalData = enviroment.generator.generateTemporal()
+                                label = enviroment.generator.generateLabel()
+                                label2 = enviroment.generator.generateLabel()
+                                label3 = enviroment.generator.generateLabel()
+                                label4 = enviroment.generator.generateLabel()
+                                label5 = enviroment.generator.generateLabel()
+                                label6 = enviroment.generator.generateLabel()
+                                label7 = enviroment.generator.generateLabel()
+                                copyVector = enviroment.generator.generateLabel()
                                 CODE = '/* NATIVA INSERT() */\n'
                                 CODE += returnedValue.code
                                 CODE += f'  {temporal} = {returned.relativePosition};\n'
@@ -333,18 +333,18 @@ class Native(Instruccion):
             elif function.typeVar == TYPE_NATIVE.CHARS:
                 if returnedValue.typeVar == TYPE_DECLARATION.STRING or returnedValue.typeVar == TYPE_DECLARATION.aSTRING: 
                     if returnedValue.typeSingle == TYPE_DECLARATION.SIMPLE:
-                        temporal = enviroment.generateTemporal()
-                        temporal2 = enviroment.generateTemporal()
-                        temporal3 = enviroment.generateTemporal()
-                        temporal4 = enviroment.generateTemporal()
-                        temporal5 = enviroment.generateTemporal()
-                        cont = enviroment.generateTemporal()
-                        label = enviroment.generateLabel()
-                        label2 = enviroment.generateLabel()
-                        label3 = enviroment.generateLabel()
-                        label4 = enviroment.generateLabel()
-                        label5 = enviroment.generateLabel()
-                        label6 = enviroment.generateLabel()
+                        temporal = enviroment.generator.generateTemporal()
+                        temporal2 = enviroment.generator.generateTemporal()
+                        temporal3 = enviroment.generator.generateTemporal()
+                        temporal4 = enviroment.generator.generateTemporal()
+                        temporal5 = enviroment.generator.generateTemporal()
+                        cont = enviroment.generator.generateTemporal()
+                        label = enviroment.generator.generateLabel()
+                        label2 = enviroment.generator.generateLabel()
+                        label3 = enviroment.generator.generateLabel()
+                        label4 = enviroment.generator.generateLabel()
+                        label5 = enviroment.generator.generateLabel()
+                        label6 = enviroment.generator.generateLabel()
                         CODE = '/* NATIVA CHARS() */\n'
                         CODE += returnedValue.code
                         CODE += f'  {cont} = 0;\n'
@@ -381,18 +381,41 @@ class Native(Instruccion):
                     return None
             elif function.typeVar == TYPE_NATIVE.SQRT:
                 if returnedValue.typeSingle == TYPE_DECLARATION.SIMPLE:
-                    if returnedValue.typeVar == TYPE_DECLARATION.INTEGER:
-                        singleValue = math.sqrt(returnedValue.value)
-                        temporal = enviroment.generateTemporal()
+                    if returnedValue.typeVar == TYPE_DECLARATION.INTEGER or returnedValue.typeVar == TYPE_DECLARATION.FLOAT:
+                        returned = None
+                        if isinstance(self.value,Handler): returned = enviroment.getVariable(self.value.id)
+                        else: returned = self.value.compile(enviroment)
+                        singleTemporal = enviroment.generator.generateTemporal()
+                        singleSqrt = enviroment.generator.generateTemporal()
+                        temporal = enviroment.generator.generateTemporal()
+                        temporal2 = enviroment.generator.generateTemporal()
+                        temporal3 = enviroment.generator.generateTemporal()
+                        temporal4 = enviroment.generator.generateTemporal()
+                        temporal5 = enviroment.generator.generateTemporal()
+                        whileLabel = enviroment.generator.generateLabel()
+                        label = enviroment.generator.generateLabel()
+                        label2 = enviroment.generator.generateLabel()
                         CODE = '/* NATIVA SQRT() */\n'
-                        CODE += f'{temporal} = {singleValue};\n'
-                        return Retorno(None,TYPE_DECLARATION.INTEGER,None,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
-                    elif returnedValue.typeVar == TYPE_DECLARATION.FLOAT: 
-                        singleValue = math.sqrt(returnedValue.value)
-                        temporal = enviroment.generateTemporal()
-                        CODE = '/* NATIVA SQRT() */\n'
-                        CODE += f'{temporal} = {singleValue};\n'
-                        return Retorno(None,TYPE_DECLARATION.FLOAT,None,TYPE_DECLARATION.SIMPLE,None,CODE,temporal)
+                        if isinstance(self.value,Handler): 
+                            CODE += f'  {temporal} = {returned.relativePosition};\n'
+                            CODE += f'  {temporal2} = Stack[(int) {temporal}];\n'
+                        else: 
+                            CODE += returned.code
+                            CODE += f'  {temporal2} = {returned.temporal};\n'
+                        CODE += f'  {singleSqrt} = {temporal2} / 2;\n'
+                        CODE += f'  {singleTemporal} = 0;\n'
+                        CODE += f'{whileLabel}:\n'
+                        CODE += f'  if ({singleSqrt} != {singleTemporal}) goto {label};\n'
+                        CODE += f'  goto {label2};\n'
+                        CODE += f'{label}:\n'
+                        CODE += f'  {singleTemporal} = {singleSqrt};\n'
+                        CODE += f'  {temporal3} = {temporal2} / {singleTemporal};\n'
+                        CODE += f'  {temporal4} = {temporal3} + {singleTemporal};\n'
+                        CODE += f'  {temporal5} = {temporal4} / 2;\n'
+                        CODE += f'  {singleSqrt} = {temporal5};\n'
+                        CODE += f'  goto {whileLabel};\n'
+                        CODE += f'{label2}:\n'
+                        return Retorno(None,returnedValue.typeVar,TYPE_DECLARATION.SIMPLE,None,CODE,singleSqrt,None)
                     else:
                         listError.append(Error("Error: La función sqtr() solo se puede ejecutar con números","Local",self.row,self.column,"SEMANTICO"))
                         return None
@@ -403,9 +426,12 @@ class Native(Instruccion):
                 if returnedValue.typeVar == TYPE_DECLARATION.INTEGER or returnedValue.typeVar == TYPE_DECLARATION.FLOAT: 
                     if returnedValue.typeSingle == TYPE_DECLARATION.SIMPLE:
                         returned = enviroment.getVariable(self.value.id)
-                        temporal = enviroment.generateTemporal()
-                        temporal2 = enviroment.generateTemporal()
-                        temporal3 = enviroment.generateTemporal()
+                        temporal = enviroment.generator.generateTemporal()
+                        temporal2 = enviroment.generator.generateTemporal()
+                        temporal3 = enviroment.generator.generateTemporal()
+                        label = enviroment.generator.generateLabel()
+                        label2 = enviroment.generator.generateLabel()
+                        exitLabel = enviroment.generator.generateLabel()
                         CODE = '/* NATIVA ABS() */\n'
                         CODE += f'{temporal} = {returned.relativePosition};\n'
                         CODE += f'{temporal2} = Stack[(int) {temporal}];\n'
@@ -413,9 +439,11 @@ class Native(Instruccion):
                         CODE += f'  goto {label2};\n'
                         CODE += f'{label}:\n'
                         CODE += f'  {temporal3} = {temporal2} * -1;\n'
+                        CODE += f'  goto {exitLabel};\n'
                         CODE += f'{label2}:\n'
                         CODE += f'  {temporal3} = {temporal2};\n'
-                        return Retorno(None,TYPE_DECLARATION.INTEGER,None,TYPE_DECLARATION.SIMPLE,None,CODE,temporal3)
+                        CODE += f'{exitLabel}:\n'
+                        return Retorno(None,TYPE_DECLARATION.INTEGER,TYPE_DECLARATION.SIMPLE,None,CODE,temporal3,None)
                     else:
                         listError.append(Error("Error: La función abs() solo se puede ejecutar con números","Local",self.row,self.column,"SEMANTICO"))
                         return None
@@ -423,8 +451,8 @@ class Native(Instruccion):
                     listError.append(Error("Error: La función abs() solo se puede ejecutar con números","Local",self.row,self.column,"SEMANTICO"))
                     return None
             elif function.typeVar == TYPE_NATIVE.NEW:
-                temporal = enviroment.generateTemporal()
-                label = enviroment.generateLabel()
+                temporal = enviroment.generator.generateTemporal()
+                label = enviroment.generator.generateLabel()
                 CODE = '/* NATIVA NEW() */\n'
                 CODE += f'  {temporal} = HP;\n'
                 CODE += f'  Heap[(int) {temporal}] = 0;\n'
@@ -443,8 +471,8 @@ class Native(Instruccion):
                 return Retorno(None,None,None,TYPE_DECLARATION.VECTOR,None,CODE,temporal)
             else:
                 #WITH_CAPACITY
-                temporal = enviroment.generateTemporal()
-                label = enviroment.generateLabel()
+                temporal = enviroment.generator.generateTemporal()
+                label = enviroment.generator.generateLabel()
                 CODE = '/* NATIVA NEW() */\n'
                 CODE += f'  {temporal} = HP;\n'
                 CODE += f'  Heap[(int) {temporal}] = 0;\n'

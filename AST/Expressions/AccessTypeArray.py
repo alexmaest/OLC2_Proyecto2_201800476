@@ -10,11 +10,11 @@ class AccessTypeArray():
         self.row = row
         self.column = column
 
-    def executeInstruction(self, enviroment):
-        returned = self.type.executeInstruction(enviroment)
+    def compile(self, enviroment):
+        returned = self.type.compile(enviroment)
         if returned != None:
             if not isinstance(self.type,AccessTypeVector):
-                return Retorno(returned.typeVar,returned.value,TYPE_DECLARATION.ARRAY)
+                return Retorno(None,returned.typeVar,TYPE_DECLARATION.ARRAY,returned.label,returned.code,returned.temporal,returned.att)
             else:
                 listError.append(Error("Error: Un vector no puede ser un tipo de variable para un array","Local",self.row,self.column,"SEMANTICO"))
                 return None

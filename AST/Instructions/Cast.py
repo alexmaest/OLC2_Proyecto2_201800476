@@ -42,6 +42,13 @@ class Cast(Instruccion):
                 elif singleExp.typeVar == TYPE_DECLARATION.INTEGER and singleType.typeVar == TYPE_DECLARATION.CHAR:
                     CODE += f'  {temporal} = (char){singleExp.temporal};\n'
                     return Retorno(None,returned,singleExp.typeSingle,singleExp.label,CODE,temporal,singleExp.att)
+                #Usize
+                elif singleExp.typeVar == TYPE_DECLARATION.USIZE and singleType.typeVar == TYPE_DECLARATION.INTEGER:
+                    CODE += f'  {temporal} = (int){singleExp.temporal};\n'
+                    return Retorno(None,returned,singleExp.typeSingle,singleExp.label,CODE,temporal,singleExp.att)
+                elif singleExp.typeVar == TYPE_DECLARATION.INTEGER and singleType.typeVar == TYPE_DECLARATION.USIZE:
+                    CODE += f'  {temporal} = (int){singleExp.temporal};\n'
+                    return Retorno(None,returned,singleExp.typeSingle,singleExp.label,CODE,temporal,singleExp.att)
                 #Float
                 if singleExp.typeVar == TYPE_DECLARATION.FLOAT and singleType.typeVar == TYPE_DECLARATION.INTEGER:
                     CODE += f'  {temporal} = (int){singleExp.temporal};\n'

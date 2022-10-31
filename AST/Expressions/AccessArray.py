@@ -49,6 +49,7 @@ class AccessArray():
         CODE += obtained.code
         CODE += f'{temporal1} = Heap[(int) {temporal}]; /* TAMAÑO DE ARRAY */\n'
         CODE += f' if ({obtained.temporal} >= {temporal1}) goto IndexOutLabel;\n'
+        CODE += f' if ({obtained.temporal} < 0) goto IndexOutLabel;\n'
         CODE += f'{temporal2} = {temporal} + 1;\n'
         CODE += f'{temporal3} = {temporal2} + {obtained.temporal};\n'
         CODE += f'{temporal4} = Heap[(int) {temporal3}];\n'
